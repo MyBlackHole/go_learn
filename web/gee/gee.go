@@ -1,6 +1,9 @@
 package gee
 
-import "net/http"
+import (
+	"net/http"
+	"strings"
+)
 
 type HandlerFunc func(*Context)
 
@@ -29,14 +32,18 @@ func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	newGroup := &RouterGroup{
 		prefix: group.prefix + prefix,
 		parent: group,
-		engine: engine,
+		engine: &Engine{router: newRouter()},
 	}
 	engine.groups = append(engine.groups, newGroup)
 	return newGroup
 }
 
-func (group *RouterGroup) addRoute(method string, comp string, handler HandlerFunc) {
-	pattern := group.prefix + comp
+//func (group *RouterGroup) addRoute(method string, comp string, handler HandlerFunc) {
+//	pattern := group.prefix + comp
+//	group.engine.router.addRoute(method, pattern, handler)
+//}
+
+func (group *RouterGroup) addRoute(method string, pattern string, handler HandlerFunc) {
 	group.engine.router.addRoute(method, pattern, handler)
 }
 
@@ -48,11 +55,24 @@ func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
 	group.addRoute("POST", pattern, handler)
 }
 
-func (group *RouterGroup) Run(addr string) (err error) {
-	return http.ListenAndServe(addr, group.engine)
+func (engine *Engine) Run(addr string) (err error) {
+	return http.ListenAndServe(addr, engine)
 }
 
-func (group *RouterGroup) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (engine *Engine) getGroup(context *Context) *router {
+	vs := strings.Split(context.Path, "/")[1:]
+	for _, group := range engine.groups {
+		s := "/"+vs[0]
+		if group.prefix == s {
+			context.Path = context.Path[len(s):]
+			return group.engine.router
+		}
+	}
+	return engine.router
+}
+
+func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	c := newContext(w, req)
-	group.engine.router.handle(c)
+	router := engine.getGroup(c)
+	router.handle(c)
 }
