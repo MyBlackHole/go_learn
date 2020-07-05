@@ -3,7 +3,15 @@ package main
 import "fmt"
 
 func main() {
-	func7()
+	func8()
+}
+func func8() {
+	const (
+		a = iota
+		b
+		c
+	)
+	fmt.Println(a, b, c)
 }
 func func7() {
 	//逻辑运算符
