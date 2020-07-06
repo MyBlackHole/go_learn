@@ -6,7 +6,13 @@ import (
 )
 
 func main() {
-	func2()
+	func3()
+}
+
+func func3() {
+	s := "/a/b"
+	i := strings.HasPrefix(s, "/a")
+	print(i)
 }
 
 type OK struct {
