@@ -17,6 +17,12 @@ type Engine struct {
 	funcMap       template.FuncMap   // for html render
 }
 
+func Default() *Engine {
+	engine := New()
+	engine.Use(Logger(), Recovery())
+	return engine
+}
+
 type RouterGroup struct {
 	prefix      string
 	middlewares []HandlerFunc
