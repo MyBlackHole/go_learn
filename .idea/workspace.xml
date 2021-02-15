@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="60e69b5f-30ae-46f8-917c-dbbc5d3ff6b6" name="默认的" comment="" />
+    <list default="true" id="60e69b5f-30ae-46f8-917c-dbbc5d3ff6b6" name="默认的" comment="">
+      <change afterPath="$PROJECT_DIR$/json_learn/1.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/so_learn/1.go" beforeDir="false" afterPath="$PROJECT_DIR$/so_learn/1.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/zip_learn.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/zip_learn.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,10 +21,11 @@
     </option>
   </component>
   <component name="GOROOT" url="file:///usr/local/go" />
-  <component name="GoLibraries">
-    <option name="indexEntireGoPath" value="false" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1nxL69Eu2p9UaGLgesYQNNR25Il" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -45,22 +52,13 @@
       <recent name="$PROJECT_DIR$/test" />
     </key>
   </component>
-  <component name="RunManager" selected="Go 构建.go build go_learn/so_learn">
-    <configuration name="go build go_learn/fyne_learn" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go 构建.go build go_learn/json_learn">
+    <configuration name="go build go_learn" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="go_learn" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <filePath value="$PROJECT_DIR$/fyne_learn/main.go" />
-      <package value="go_learn/fyne_learn" />
-      <directory value="$PROJECT_DIR$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build go_learn/fyne_learn/fyne" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="go_learn" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <filePath value="$PROJECT_DIR$/fyne_learn/fyne/main.go" />
-      <package value="go_learn/fyne_learn/fyne" />
+      <filePath value="$PROJECT_DIR$/test.go" />
+      <package value="go_learn" />
       <directory value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
@@ -82,6 +80,15 @@
       <directory value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
+    <configuration name="go build go_learn/json_learn" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="go_learn" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/json_learn/1.go" />
+      <package value="go_learn/json_learn" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
     <configuration name="go build go_learn/so_learn" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="go_learn" />
       <working_directory value="$PROJECT_DIR$" />
@@ -93,17 +100,29 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go 构建.go build go_learn/json_learn" />
+        <item itemvalue="Go 构建.go build go_learn" />
         <item itemvalue="Go 构建.go build go_learn/so_learn" />
         <item itemvalue="Go 构建.go build go_learn/fyne_learn/fyne_settings" />
         <item itemvalue="Go 构建.go build go_learn/fyne_learn/fyne_demo" />
-        <item itemvalue="Go 构建.go build go_learn/fyne_learn/fyne" />
-        <item itemvalue="Go 构建.go build go_learn/fyne_learn" />
       </list>
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

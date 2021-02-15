@@ -26,3 +26,4 @@ func main() {
 	//sub := Sub.(func(int, int) int)(9, 8)
 	//fmt.Println("Sub结果：", sub)
 }
+
