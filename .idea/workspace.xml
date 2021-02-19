@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="60e69b5f-30ae-46f8-917c-dbbc5d3ff6b6" name="默认的" comment="">
-      <change afterPath="$PROJECT_DIR$/json_learn/1.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/so_learn/1.go" beforeDir="false" afterPath="$PROJECT_DIR$/so_learn/1.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/zip_learn.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/zip_learn.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/net_learn/1.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/语法_learn/协程.go" beforeDir="false" afterPath="$PROJECT_DIR$/语法_learn/协程.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +35,7 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../shadowsocks-go" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
