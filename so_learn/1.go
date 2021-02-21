@@ -10,6 +10,8 @@ import (
 	"fmt"
 )
 
+// o build -ldflags="-r ./" 1.go 
+
 func main() {
 	a := C.add(1, 3)
 	fmt.Println(a)

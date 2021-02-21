@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="60e69b5f-30ae-46f8-917c-dbbc5d3ff6b6" name="默认的" comment="">
-      <change afterPath="$PROJECT_DIR$/path_learn/1.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/so_learn/1.go" beforeDir="false" afterPath="$PROJECT_DIR$/so_learn/1.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/so_learn/test.h" beforeDir="false" afterPath="$PROJECT_DIR$/so_learn/test.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,12 +51,20 @@
       <recent name="$PROJECT_DIR$/test" />
     </key>
   </component>
-  <component name="RunManager" selected="Go 构建.go build 1.go (1)">
+  <component name="RunManager" selected="Go 构建.go build 1.go (2)">
     <configuration name="go build 1.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="go_learn" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
       <filePath value="$PROJECT_DIR$/path_learn/1.go" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build 1.go (2)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="go_learn" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/so_learn/1.go" />
       <directory value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
@@ -85,22 +94,13 @@
       <directory value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
-    <configuration name="go build go_learn/so_learn" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="go_learn" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <filePath value="$PROJECT_DIR$/so_learn/1.go" />
-      <package value="go_learn/so_learn" />
-      <directory value="$PROJECT_DIR$" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go 构建.go build 1.go (2)" />
         <item itemvalue="Go 构建.go build 1.go (1)" />
         <item itemvalue="Go 构建.go build 1.go" />
         <item itemvalue="Go 构建.go build go_learn/json_learn" />
         <item itemvalue="Go 构建.go build go_learn" />
-        <item itemvalue="Go 构建.go build go_learn/so_learn" />
       </list>
     </recent_temporary>
   </component>
