@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	func3()
+	func1()
 }
 
 func func3() {
@@ -34,4 +34,10 @@ func func1() {
 		fmt.Println(s)
 	}
 	fmt.Println(s[0])
+	var ss string
+	if "" == ss {
+		fmt.Println(111)
+	}
+	fmt.Println(ss)
+	fmt.Println(222)
 }
