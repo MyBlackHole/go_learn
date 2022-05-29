@@ -1,0 +1,32 @@
+package main
+
+import (
+	"fmt"
+	"time"
+
+	_ "github.com/go-sql-driver/mysql"
+	"xorm.io/xorm"
+)
+
+type User struct {
+	Id      int64
+	Name    string
+	Salt    string
+	Age     int
+	Passwd  string    `xorm:"varchar(200)"`
+	Created time.Time `xorm:"created"`
+	Updated time.Time `xorm:"updated"`
+}
+
+func main() {
+	engine, err := xorm.NewEngine("mysql", "root:123456@/test?charset=utf8")
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	engine.ID(1).Update(&User{Name: "ldj"})
+	engine.ID(1).Cols("name", "age").Update(&User{Name: "dj"})
+
+	engine.Table(&User{}).ID(1).Update(map[string]interface{}{"age": 18})
+}

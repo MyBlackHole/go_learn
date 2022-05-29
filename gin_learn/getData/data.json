@@ -1,0 +1,53 @@
+{
+    "success": true,
+    "code": "0",
+    "message": "success",
+    "data": {
+        "total": 6,
+        "list": [
+            {
+                "extend": {
+                    "weixin": {}
+                },
+                "wtype": 1,
+                "utime": 1606458637,
+                "ctime": 1606393121,
+                "pic_urls": [
+                    "https://mmbiz.qpic.cn/mmbiz_gif/Ljib4So7yuWhrypMYO9PGlB0BqwJBKribyNb2soKFPba49cpuQ1UgyF4z 7r4UtGDm5ZbprlWlnS4KD4rmdarZQYA/640?wx_fmt=gif",
+                    "https://mmbiz.qpic.cn/mmbiz_png/GSpaXD08iadic7xqv4VD9HalOIOOicpTX9MHQbUB3Cv9hciaKKIUvMJo ySxmwdYvPdETvcO6ibBPibHp82PibFLfjGTsg/640?wx_fmt=png"
+                ],
+                "gather": {
+                    "site_name": "微信",
+                    "site_domain": "mp.weixin.qq.com",
+                    "stime": 1606393533,
+                    "info_flag": "06"
+                },
+                "title": "樟树四特大桥及薛溪互通桥桥面病害维修工程通过验收",
+                "analysis": {
+                    "sentiment": 0,
+                    "info_src": {
+                        "lv": {
+                            "name": "B"
+                        }
+                    }
+                },
+                "uuid": "7abd20da2fe211eb915e6a5bd2ff4254",
+                "user": {
+                    "uid": "vzs0795",
+                    "profile_img_url": "https://img01.sogoucdn.com/app/a/100520090/oIWsFt54vQr5M1qnHpN746Dh6vnk",
+                    "location_code": "154738",
+                    "verified": 2,
+                    "name": "樟树同城",
+                    "description": "同城;每天送本土文化;同城活动;吃喝玩乐;新闻资讯;商家优惠;人才房产;交友婚恋等诸多 优质内容.致力于打造本土最全面最便捷便捷的生活服务平台.",
+                    "location": [
+                        "江西省",
+                        "宜春市"
+                    ],
+                    "verified_type": 2
+                },
+                "content": "11月20日，樟树市四特大桥及薛溪互通桥桥面病害维修工程项目交工验收会在樟树大桥管理 处会议室顺利召开，市局质监站作为质量监督方受邀参加此次会议。会议上，先后听取了业主、设计、施工、监 理单位关于工程建设情况的汇报，随后由市局质监站代表作为质量监督单位通报了工程交工验收检查情况及交工 验收意见。经综合评议，认为樟树市四特大桥及薛溪互通桥桥面病害维修工程项目实体质量满足设计及质量检验 评定标准的要求，达到交工验收标准，评定等级为合格，同意通过交工验收！来源：质监站",
+                "url": "http://mp.weixin.qq.com/s?__biz=MzA4NzQ1NDQ5Mg==&mid=2649379135&idx=1&sn=62e616c3cc7db748 fbedc33f694ab514"
+            }
+        ]
+    }
+}

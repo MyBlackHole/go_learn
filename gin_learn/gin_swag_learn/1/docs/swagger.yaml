@@ -1,0 +1,41 @@
+info:
+  contact: {}
+paths:
+  /hello:
+    get:
+      description: Hello接口
+      responses:
+        "200":
+          description: '{"message":"success"}'
+          schema:
+            type: string
+      summary: Hello接口
+      tags:
+      - 用户信息
+  /print:
+    get:
+      description: This is a sample server Petstore server.
+      parameters:
+      - description: Name
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":"name","msg":"ok"}'
+          schema:
+            type: string
+      summary: 打印测试功能
+  /test:
+    get:
+      description: 描述信息
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: 测试接口
+swagger: "2.0"
