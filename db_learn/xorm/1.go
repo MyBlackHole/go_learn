@@ -20,14 +20,14 @@ const (
 )
 
 type new_car_img_marked struct {
-	ImgURL       string      `xorm:"'img_url'"`
-	FdfsURL      string      `xorm:"'fdfs_url'"`
-	ImgHash      string      `xorm:"'img_hash'"`
-	ImgPpi       string      `xorm:"'img_ppi'"`
-	Color        string      `xorm:"'color'"`
-	Source       int         `xorm:"'source'"`
-	DataID       int         `xorm:"'data_id'"`
-	ImgErrStatus string      `xorm:"'img_err_status'"`
+	ImgURL       string `xorm:"'img_url'"`
+	FdfsURL      string `xorm:"'fdfs_url'"`
+	ImgHash      string `xorm:"'img_hash'"`
+	ImgPpi       string `xorm:"'img_ppi'"`
+	Color        string `xorm:"'color'"`
+	Source       int    `xorm:"'source'"`
+	DataID       int    `xorm:"'data_id'"`
+	ImgErrStatus string `xorm:"'img_err_status'"`
 }
 
 func main() {

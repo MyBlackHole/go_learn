@@ -34,10 +34,10 @@ type TimeTmp struct {
 }
 
 type Resp struct {
-	Err      string    `json:"err"`
-	TimeSum  int64     `json:"timeSum"`
-	TimeMax  int64     `json:"timeMax"`
-	TimeMin  int64     `json:"timeMin"`
+	Err     string `json:"err"`
+	TimeSum int64  `json:"timeSum"`
+	TimeMax int64  `json:"timeMax"`
+	TimeMin int64  `json:"timeMin"`
 	// TimeMin  int64     `json:"timeMin"`
 	// DataList []TimeTmp `json:"dataList"`
 }
@@ -196,7 +196,6 @@ func main() {
 		fmt.Printf("%v", resp)
 		return
 	}
-
 
 	err = ioutil.WriteFile("resp.json", bytAll, 0755)
 	if err != nil {

@@ -15,7 +15,7 @@ type User struct {
 
 const (
 	USERNAME = "root"
-	PASSWORD = "chen19950210"
+	PASSWORD = "123456"
 	NETWORK  = "tcp"
 	SERVER   = "localhost"
 	PORT     = 3306
