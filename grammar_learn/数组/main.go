@@ -38,6 +38,13 @@ func main() {
 
 	var arr4 = [...]int{1: 1, 0: 4, 2: 7}
 	fmt.Println(arr4)
-
 	fmt.Printf("%T\n", arr4)
+	fmt.Printf("%d--%d\n", len(arr4), cap(arr4))
+
+	// 元素删除
+	deleteIndex := 1
+	newlist := append(arr4[:deleteIndex], arr4[(deleteIndex+1):]...)
+	fmt.Println(newlist)
+	fmt.Printf("%T\n", newlist)
+	fmt.Printf("%d--%d\n", len(arr4), cap(arr4))
 }

@@ -18,11 +18,11 @@ func main() {
 	// 	// goto Loop
 	// }
 
-	Boop:
-		for key, value := range kvs1 {
-			fmt.Println(key, "=>", value)
-			break Boop
-		}
+Boop:
+	for key, value := range kvs1 {
+		fmt.Println(key, "=>", value)
+		break Boop
+	}
 
 	// Loop:
 	// 	fmt.Print("ok")

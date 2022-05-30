@@ -17,4 +17,3 @@ func main() {
 	fmt.Printf("times is %+v \n, timeUnix is %+v", times, timeUnix)
 
 }
-

@@ -42,4 +42,12 @@ func main() {
 	// 返回子串在字符串第一次出现的索引值
 	index := strings.Index("gogago", "go")
 	fmt.Println(index)
+
+	slice1 := []byte{65, 66, 67, 68, 69}
+	s3 := string(slice1)
+	fmt.Println(s3)
+
+	s4 := "abcdef"
+	slice2 := []byte(s4)
+	fmt.Println(slice2)
 }

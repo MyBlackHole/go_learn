@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 import "time"
+
 // import "log/gotool"
 
 var iii int
@@ -20,7 +21,6 @@ func main() {
 	// var i64 int64 = int64(i)
 	fmt.Println(i)
 
-
 	var i8 int8 = -1
 
 	var i81 int8 = -127 / i8
@@ -37,7 +37,6 @@ func main() {
 	} else {
 		fmt.Println(in2)
 	}
-
 
 	// var (
 	// 	i = 0
@@ -63,9 +62,9 @@ func main() {
 
 	var arr = []int{1, 2, 3}
 
-	for i := 0; i < len(arr) - 1; {
+	for i := 0; i < len(arr)-1; {
 		j := i + 1
-		if j > len(arr) - 1 {
+		if j > len(arr)-1 {
 			j = len(arr) - 1
 		}
 		fmt.Println(arr[i:j])
