@@ -25,4 +25,6 @@ func main() {
 
 	t5, ok := k.(int)
 	fmt.Printf("%d-%t\n", t5, ok)
+
 }
+

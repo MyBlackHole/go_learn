@@ -21,7 +21,7 @@ type User struct {
 func main() {
 	engine, _ := xorm.NewEngine("mysql", "root:12345@/test?charset=utf8")
 
-	slcUsers:= make([]User, 1)
+	slcUsers := make([]User, 1)
 	engine.Where("age > ? and age < ?", 12, 30).Find(&slcUsers)
 	fmt.Println("users whose age between [12,30]:", slcUsers)
 

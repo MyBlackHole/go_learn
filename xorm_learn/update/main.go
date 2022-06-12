@@ -21,12 +21,18 @@ type User struct {
 func main() {
 	engine, err := xorm.NewEngine("mysql", "root:123456@/test?charset=utf8")
 
+	engine.Sync2(&User{})
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	engine.ID(1).Update(&User{Name: "ldj"})
-	engine.ID(1).Cols("name", "age").Update(&User{Name: "dj"})
+	// 插入数据
+	engine.Insert(&User{Name: "dj", Age: 18})
+
+	engine.Update(&User{Name: "ldj"})
+	// engine.ID(1).Update(&User{Name: "ldj"})
+	// engine.ID(2).Cols("name", "age").Update(&User{Name: "dj"})
 
 	engine.Table(&User{}).ID(1).Update(map[string]interface{}{"age": 18})
 }
