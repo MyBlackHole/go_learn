@@ -22,4 +22,21 @@ func main() {
 		return
 	}
 	fmt.Printf("%T -- %d\n", i2, i2)
+
+	i, err := strconv.Atoi("A")
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		fmt.Println(i)
+	}
+
+	var a byte = 'A'
+	b := 'A' + 1
+	i1 := 1
+	fmt.Println(a)
+	fmt.Println(a + byte(i1))
+	fmt.Println(string(b))
+	fmt.Printf("%T\n", b)
+
+	fmt.Printf("%c\n", 65)
 }

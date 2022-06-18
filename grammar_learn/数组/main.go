@@ -47,4 +47,13 @@ func main() {
 	fmt.Println(newlist)
 	fmt.Printf("%T\n", newlist)
 	fmt.Printf("%d--%d\n", len(arr4), cap(arr4))
+
+	var arr5 []int
+	newlist = append(arr4[:deleteIndex], arr5...)
+	fmt.Println(newlist)
+
+	arr5 = append(arr5, arr4[:]...)
+	fmt.Println(arr5)
+	arr5 = arr5[:0]
+	fmt.Println(arr5)
 }
