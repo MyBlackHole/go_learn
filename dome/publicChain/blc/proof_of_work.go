@@ -15,6 +15,15 @@ type ProofOfWork struct {
 	target *big.Int
 }
 
+func (proofOfWork *ProofOfWork) IsValid() bool {
+	hashInt := new(big.Int)
+	hashInt.SetBytes(proofOfWork.Block.Hash)
+	if proofOfWork.target.Cmp(hashInt) == 1 {
+		return true
+	}
+	return false
+}
+
 func (proofOfWork *ProofOfWork) prepareData(nonce int64) []byte {
 	data := bytes.Join(
 		[][]byte{
