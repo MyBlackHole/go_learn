@@ -19,6 +19,13 @@ func main() {
 	fmt.Printf("%d\n", block.Nonce)
 	fmt.Printf("%x\n", block.Hash)
 
-	proofOfWork := blc.NewProofOfWork(block)
-	fmt.Printf("%v\n", proofOfWork.IsValid())
+	// proofOfWork := blc.NewProofOfWork(block)
+	// fmt.Printf("%v\n", proofOfWork.IsValid())
+
+	bytes := block.Serialize()
+	fmt.Println(bytes)
+
+	block = blc.DeserializeBlock(bytes)
+	fmt.Printf("%d\n", block.Nonce)
+	fmt.Printf("%x\n", block.Hash)
 }
