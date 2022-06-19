@@ -41,3 +41,7 @@ func NewBlock(data string, height int64, prevBlockHash []byte) *Block {
 	block.SetHash()
 	return &block
 }
+
+func CreateGenesisBlock(data string) *Block {
+	return NewBlock(data, 1, make([]byte, 32, 32))
+}
