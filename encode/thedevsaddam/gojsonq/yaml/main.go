@@ -24,3 +24,4 @@ func (i *yamlDecoder) Decode(data []byte, v interface{}) error {
 	}
 	return json.Unmarshal(bb, &v)
 }
+
