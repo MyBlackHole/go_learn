@@ -18,6 +18,8 @@ type Block struct {
 	Timestamp int64
 	// 当前 Hash
 	Hash []byte
+	// Nonce
+	Nonce int64
 }
 
 func (block *Block) SetHash() {
@@ -31,15 +33,22 @@ func (block *Block) SetHash() {
 
 // 创建新区块
 func NewBlock(data string, height int64, prevBlockHash []byte) *Block {
-	block := Block{
+	block := &Block{
 		Height:        height,
 		PrevBlockHash: prevBlockHash,
 		Data:          []byte(data),
 		Timestamp:     time.Now().Unix(),
 		Hash:          nil,
+		Nonce:         0,
 	}
-	block.SetHash()
-	return &block
+
+	// 工作量证明
+	pow := NewProofOfWork(block)
+	hash, nonce := pow.Run()
+	block.Hash = hash[:]
+	block.Nonce = nonce
+	// block.SetHash()
+	return block
 }
 
 func CreateGenesisBlock(data string) *Block {
