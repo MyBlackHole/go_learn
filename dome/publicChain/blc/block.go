@@ -3,6 +3,7 @@ package blc
 import (
 	"bytes"
 	"crypto/sha256"
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -26,7 +27,15 @@ func (block *Block) SetHash() {
 	heightBytes := IntToHex(block.Height)
 	timestampStr := strconv.FormatInt(block.Timestamp, 2)
 	timestampBytes := []byte(timestampStr)
-	blockBytes := bytes.Join([][]byte{heightBytes, block.PrevBlockHash, block.Data, timestampBytes, block.Hash}, []byte{})
+	blockBytes := bytes.Join(
+		[][]byte{
+			heightBytes,
+			block.PrevBlockHash,
+			block.Data,
+			timestampBytes,
+			block.Hash,
+		}, []byte{},
+	)
 	hash := sha256.Sum256(blockBytes)
 	block.Hash = hash[:]
 }
@@ -44,7 +53,9 @@ func NewBlock(data string, height int64, prevBlockHash []byte) *Block {
 
 	// 工作量证明
 	pow := NewProofOfWork(block)
+	// 挖矿验证
 	hash, nonce := pow.Run()
+	fmt.Printf("%x\n", hash)
 	block.Hash = hash[:]
 	block.Nonce = nonce
 	// block.SetHash()
