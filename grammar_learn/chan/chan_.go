@@ -18,10 +18,10 @@ func main() {
 	var ch CH
 	var count int
 	ch.limitChan = make(chan bool, 10)
-  go read(ch)
+	go read(ch)
 	for true {
 		ch.limitChan <- true
-    count += 1
+		count += 1
 		fmt.Println(count)
 	}
 }
