@@ -10,24 +10,31 @@ import (
 )
 
 func main() {
-	f, err := excelize.OpenFile("Book1.xlsx")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	f := excelize.NewFile()
 	defer func() {
 		// Close the spreadsheet.
 		if err := f.Close(); err != nil {
 			fmt.Println(err)
 		}
 	}()
+
+	err := f.SetRowHeight("Sheet1", 2, 50)
+	if err != nil {
+		return
+	}
+
+	err = f.SetColWidth("Sheet1", "A", "A", 10)
+	if err != nil {
+		return
+	}
+
 	// Insert a picture.
-	if err := f.AddPicture("Sheet1", "A2", "image.png", ""); err != nil {
+	if err := f.AddPicture("Sheet1", "A2", "image.png", `{"autofit": true}`); err != nil {
 		fmt.Println(err)
 	}
 	// Insert a picture to worksheet with scaling.
 	if err := f.AddPicture("Sheet1", "D2", "image.jpg",
-		`{"x_scale": 0.5, "y_scale": 0.5}`); err != nil {
+		`{"x_scale": 0.5, "y_scale": 0.5, "autofit": true}`); err != nil {
 		fmt.Println(err)
 	}
 	// Insert a picture offset in the cell with printing support.
@@ -36,12 +43,14 @@ func main() {
         "y_offset": 10,
         "print_obj": true,
         "lock_aspect_ratio": false,
+        "autofit": true,
         "locked": false
     }`); err != nil {
 		fmt.Println(err)
 	}
+
 	// Save the spreadsheet with the origin path.
-	if err = f.Save(); err != nil {
+	if err := f.SaveAs("Book1.xlsx"); err != nil {
 		fmt.Println(err)
 	}
 }
