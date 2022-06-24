@@ -12,4 +12,4 @@ database = "awesome"
 
 [redis]
 ip = "127.0.0.1"
-# port = 7381
+port = 7381

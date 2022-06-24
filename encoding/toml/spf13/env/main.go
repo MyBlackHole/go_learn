@@ -14,7 +14,7 @@ func init() {
 	// 绑定环境变量
 	viper.AutomaticEnv()
 	// viper.BindEnv("redis.port")
-    // viper.BindEnv("go.path", "GOPATH")
+	// viper.BindEnv("go.path", "GOPATH")
 }
 
 func main() {
