@@ -25,8 +25,9 @@ type tFile struct {
 	fd storage.FileDesc
 	// 无效读的阈值，等于文件大小 / 16k，每次无效读都递减1。
 	// 当seekLeft == 0，触发major compaction
-	seekLeft   int32
-	size       int64
+	seekLeft int32
+	size     int64
+	// 文件最小、最大键
 	imin, imax internalKey
 }
 

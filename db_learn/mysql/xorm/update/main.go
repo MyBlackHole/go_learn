@@ -30,6 +30,9 @@ func main() {
 	// 插入数据
 	engine.Insert(&User{Name: "dj", Age: 18})
 
+	// 更新为 0
+	// affected, err := engine.Id(id).Cols("age").Update(&user)
+
 	engine.Update(&User{Name: "ldj"})
 	// engine.ID(1).Update(&User{Name: "ldj"})
 	// engine.ID(2).Cols("name", "age").Update(&User{Name: "dj"})

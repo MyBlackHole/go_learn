@@ -17,8 +17,8 @@ func main() {
 		rs := []rune(string(prefix))
 		blen = len(rs)
 	}
-	fmt.Println(blen) // 5
-
+	fmt.Println(blen)                                                  // 5
+	fmt.Println(strings.Split(",", ","), len(strings.Split(",", ","))) // 5
 }
 
 /**

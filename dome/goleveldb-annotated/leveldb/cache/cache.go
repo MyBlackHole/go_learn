@@ -130,6 +130,7 @@ func (b *mBucket) get(r *Cache, h *mNode, hash uint32, ns, key uint64, noset boo
 
 	// Grow.
 	if grow && atomic.CompareAndSwapInt32(&h.resizeInProgess, 0, 1) {
+		// resizeInProgess 设 1 成功
 		nhLen := len(h.buckets) << 1
 		nh := &mNode{
 			buckets:         make([]unsafe.Pointer, nhLen),
@@ -219,9 +220,11 @@ func (b *mBucket) delete(r *Cache, h *mNode, hash uint32, ns, key uint64) (done,
 }
 
 type mNode struct {
-	buckets         []unsafe.Pointer // []*mBucket
-	mask            uint32
-	pred            unsafe.Pointer // *mNode
+	buckets []unsafe.Pointer // []*mBucket
+	mask    uint32
+
+	pred unsafe.Pointer // *mNode // 记录旧的 dict
+
 	resizeInProgess int32
 
 	overflow        int32
@@ -229,6 +232,7 @@ type mNode struct {
 	shrinkThreshold int32
 }
 
+// 初始化创建桶
 func (n *mNode) initBucket(i uint32) *mBucket {
 	if b := (*mBucket)(atomic.LoadPointer(&n.buckets[i])); b != nil {
 		return b
@@ -387,7 +391,7 @@ func (r *Cache) Get(ns, key uint64, setFunc func() (size int, value Value)) *Han
 		// 使用hash值查找对应的dict指针和bucket指针
 		h, b := r.getBucket(hash)
 		// 从bucket中查找，返回值分别是：done(完成), added(新增node), Node
-		// 只有dict出于frozen状态时，done才是false
+		// 只有dict处于frozen状态时，done才是false
 		done, _, n := b.get(r, h, hash, ns, key, setFunc == nil)
 		if done {
 			if n != nil {

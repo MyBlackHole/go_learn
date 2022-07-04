@@ -44,5 +44,3 @@ func main() {
 	fmt.Println(array1[:])
 	//
 }
-
-

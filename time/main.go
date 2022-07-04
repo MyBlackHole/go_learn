@@ -47,6 +47,8 @@ func TestDateTime() {
 func main() {
 	TestDateTime()
 	now := int(time.Now().Unix())
-	fmt.Print(now)
+	fmt.Println(now)
 
+	fmt.Println()
+	time.Parse(time.Now().Format("2006-01-02"), "2006-01-02")
 }
