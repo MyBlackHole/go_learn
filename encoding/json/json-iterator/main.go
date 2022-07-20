@@ -48,11 +48,13 @@ func main() {
 	//      fmt.Println("Facebook Url: " + users.Users[i].Social.Facebook)
 	//}
 
-	var result map[string]interface{}
+	// var result map[string]interface{}
+	var result Users
 
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 	json.Unmarshal(byteValue, &result)
 
-	fmt.Println(result["users"])
+	fmt.Println(result)
+
 }

@@ -37,6 +37,7 @@ func main() {
 	map1[5] = "5"
 
 	fmt.Println(map1)
+	fmt.Println(len(map1), "--------")
 
 	value, ok := map1[8]
 	if ok {

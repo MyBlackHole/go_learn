@@ -19,11 +19,10 @@ func findDoc(stru interface{}) map[string]string {
 	}
 
 	return doc
-
 }
 
 func main() {
 	var stru resume
 	doc := findDoc(&stru)
-	fmt.Printf("name字段为：%s", doc["name"])
+	fmt.Printf("name字段为：%s\n", doc["name"])
 }

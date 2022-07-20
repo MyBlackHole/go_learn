@@ -49,5 +49,32 @@ func main() {
 
 	s4 := "abcdef"
 	slice2 := []byte(s4)
+	fmt.Println(string(slice2))
 	fmt.Println(slice2)
+
+	fmt.Println(ExcelColString(25, "AA"))
+}
+
+func ExcelColString(colI uint8, axis string) string {
+	count := len(axis)
+	cList := []byte(axis)
+	cList[count-1] += colI
+	for i := count - 1; i >= 0; i-- {
+		for cList[i] > 'Z' {
+			cList[i] = cList[i] - 'Z'
+			if cList[i] == 1 {
+				cList[i] = 'A'
+			}
+			if i <= 0 {
+				var cListBat []byte
+				cListBat = append(cListBat, 'A')
+				cListBat = append(cListBat, cList...)
+				cList = cListBat
+			} else {
+				cList[i-1] += 1
+			}
+		}
+	}
+	axis = string(cList)
+	return axis
 }
