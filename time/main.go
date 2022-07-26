@@ -51,4 +51,5 @@ func main() {
 
 	fmt.Println()
 	time.Parse(time.Now().Format("2006-01-02"), "2006-01-02")
+	fmt.Println(time.Date(2022, 7, 26, 12, 25, 0, 0, time.UTC))
 }
