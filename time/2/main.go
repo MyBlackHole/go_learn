@@ -14,6 +14,12 @@ func main() {
 	fmt.Printf("times is %+v \n, timeUnix is %+v", times, timeUnix)
 	// 建议
 	times, _ = time.ParseInLocation("2006-01-02 15:04:05", timeLayout, time.Local)
-	fmt.Printf("times is %+v \n, timeUnix is %+v", times, timeUnix)
+	fmt.Printf("times is %+v \n, timeUnix is %+v\n", times, timeUnix)
+	var month time.Month
+	month = 2
 
+	startTime := time.Date(2022, month, 1, 0, 00, 0, 0, time.UTC)
+	end := time.Unix(time.Date(2022, month, 1, 0, 00, 0, 0, time.UTC).Unix()-1, 0).In(time.UTC)
+	fmt.Println(startTime, "----")
+	fmt.Println(end, "----")
 }
