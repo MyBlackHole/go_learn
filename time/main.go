@@ -5,6 +5,9 @@ import (
 	"time"
 )
 
+// ANSIC       = "Mon Jan _2 15:04:05 2006"
+// UnixDate    = "Mon Jan _2 15:04:05 MST 2006"
+
 func CurrentDateNotFormat() string {
 	timeUnix := time.Now().Unix()
 	return time.Unix(timeUnix, 0).Format("20060102")
@@ -51,5 +54,12 @@ func main() {
 
 	fmt.Println()
 	time.Parse(time.Now().Format("2006-01-02"), "2006-01-02")
-	fmt.Println(time.Date(2022, 7, 26, 12, 25, 0, 0, time.UTC))
+	t := time.Date(2022, 7, 26, 12, 25, 0, 0, time.UTC)
+	fmt.Println(t.String())
+	t1 := time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), time.Local)
+	fmt.Println(t1.String())
+
+	fmt.Println(time.Date(2022, 7, 26, 12, 25, 0, 0, time.UTC).Location().String())
+
+	fmt.Println(t1.Weekday())
 }

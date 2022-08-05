@@ -35,10 +35,11 @@ func main() {
 		fmt.Println("tag标签的信息为", name.Tag.Get("json"))
 	}
 
+	var list []interface{} = []interface{}{112, nil}
 	// 通过反射填充结构体
 	// hello := new(Hello)
+	// retHello := reflect.ValueOf(hello)
 	var hello Hello
-	var list []interface{} = []interface{}{112, nil}
 	retHello := reflect.ValueOf(&hello)
 	if retHello.Kind() == reflect.Ptr {
 		retHello = retHello.Elem()

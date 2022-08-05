@@ -71,4 +71,11 @@ func main() {
 	for _, v := range keys {
 		fmt.Println(v, map1[v])
 	}
+
+	mb := make(map[string]bool)
+	mb["1"] = true
+	mb["2"] = false
+	for v := range mb {
+		fmt.Println(v)
+	}
 }
