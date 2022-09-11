@@ -20,9 +20,15 @@ func (p *panicJob) Run() {
 	fmt.Println("hello world")
 }
 
+func test() {
+	panic("oooooooooooooops!!!")
+}
+
 func main() {
 	c := cron.New()
-	c.AddJob("@every 1s", cron.NewChain(cron.Recover(cron.DefaultLogger)).Then(&panicJob{}))
+	// cron.Recover()()
+	// c.AddJob("@every 1s", cron.NewChain(cron.Recover(cron.DefaultLogger)).Then(test))
+	// c.AddJob("@every 1s", cron.NewChain(cron.Recover(cron.DefaultLogger)).Then(&panicJob{}))
 	c.Start()
 
 	time.Sleep(5 * time.Second)

@@ -22,10 +22,11 @@ func (t *Test) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-var example []byte = []byte(`[{"A": "1", "C": "3"}, {"A": "4", "B": 2}, {"C": "5"}]`)
+// var example []byte = []byte(`[{"A": "1", "C": "3"}, {"A": "4", "B": 2}, {"C": "5"}]`)
+var example []byte = []byte(`{"A": "1", "C": "3"}`)
 
 func main() {
-	out := &[]Test{}
-	_ = json.Unmarshal(example, &out)
+	var out *Test
+	_ = json.Unmarshal(example, out)
 	fmt.Print(out)
 }

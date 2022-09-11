@@ -35,14 +35,17 @@ func main() {
 	json.Unmarshal(data, &b)
 	fmt.Printf("%#v\n", b)
 
-	a := AppWithOrg{
-		App: App{
-			Id: "k34rAT4",
-		},
-		Org: Org{
-			Name: "My Awesome Org",
-		},
-	}
+	// a := AppWithOrg{
+	// 	App: App{
+	// 		Id: "k34rAT4",
+	// 	},
+	// 	Org: Org{
+	// 		Name: "My Awesome Org",
+	// 	},
+	// }
+
+	var a *AppWithOrg
+
 	data, _ = json.Marshal(a)
 	fmt.Println(string(data))
 
