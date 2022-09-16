@@ -1,0 +1,12 @@
+Name: check.rpc
+ListenOn: 127.0.0.1:8082
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: check.rpc
+
+DataSource: root:123456@tcp(localhost:3306)/bookstore
+# mysql链接地址，满足 $user:$password@tcp($ip:$port)/$db?$queries 格式即可
+Table: book
+Cache:
+  - Host: localhost:6379

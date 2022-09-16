@@ -1,0 +1,10 @@
+Name: shorturl-api
+Host: 0.0.0.0
+Port: 8888
+Transform:
+  Endpoints:
+    - localhost:8081
+  NonBlock: true
+Telemetry:
+  Endpoint: http://localhost:14268/api/traces
+  Batcher: jaeger
