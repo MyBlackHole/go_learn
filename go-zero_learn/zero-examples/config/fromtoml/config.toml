@@ -1,5 +1,0 @@
-# most fields are optional or have default values
-Port = 8_080
-LogMode = "console"
-# you can use env settings
-MaxBytes = 1048576
