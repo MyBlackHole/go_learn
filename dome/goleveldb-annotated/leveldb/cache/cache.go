@@ -19,12 +19,15 @@ import (
 // An implementation must be safe for concurrent use.
 type Cacher interface {
 	// Capacity returns cache capacity.
+	// 获取容量
 	Capacity() int
 
 	// SetCapacity sets cache capacity.
+	// 设置容量
 	SetCapacity(capacity int)
 
 	// Promote promotes the 'cache node'.
+	// 提升缓存节点
 	Promote(n *Node)
 
 	// Ban evicts the 'cache node' and prevent subsequent 'promote'.

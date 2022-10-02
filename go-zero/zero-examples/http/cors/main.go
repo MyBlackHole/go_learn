@@ -14,6 +14,7 @@ var configFile = flag.String("f", "config.yaml", "the config file")
 
 type Request struct {
 	User string `form:"user"`
+	H    string `header:"h"`
 }
 
 func first(next http.HandlerFunc) http.HandlerFunc {
@@ -38,7 +39,7 @@ func handleHello(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httpx.OkJson(w, "welcome, "+req.User)
+	httpx.OkJson(w, req)
 }
 
 func main() {

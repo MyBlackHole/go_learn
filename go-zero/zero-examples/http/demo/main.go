@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"net/http"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/service"
@@ -40,6 +41,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	time.Sleep(10 * time.Second)
 
 	httpx.OkJson(w, "hello, "+req.User)
 }
@@ -58,6 +60,8 @@ func main() {
 		MaxConns: 500,
 	})
 	defer engine.Stop()
+
+	logx.Disable()
 
 	engine.Use(first)
 	engine.Use(second)

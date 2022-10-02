@@ -63,6 +63,7 @@ func main() {
 	var arr = []int{1, 2, 3}
 
 	for i := 0; i < len(arr)-1; {
+
 		j := i + 1
 		if j > len(arr)-1 {
 			j = len(arr) - 1

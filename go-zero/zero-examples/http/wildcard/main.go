@@ -32,22 +32,29 @@ func handle(w http.ResponseWriter, r *http.Request) {
 func main() {
 	flag.Parse()
 
-	engine := rest.MustNewServer(rest.RestConf{
-		ServiceConf: service.ServiceConf{
-			Log: logx.LogConf{
-				Mode: "console",
+	engine := rest.MustNewServer(
+		rest.RestConf{
+			ServiceConf: service.ServiceConf{
+				Log: logx.LogConf{
+					Mode: "console",
+				},
 			},
+			Host:     "localhost",
+			Port:     *port,
+			MaxConns: 500,
 		},
-		Host:     "localhost",
-		Port:     *port,
-		MaxConns: 500,
-	}, rest.WithNotFoundHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasPrefix(r.URL.Path, "/api/any/") {
-			fmt.Fprintf(w, "wildcard: %s", r.URL.Path)
-		} else {
-			http.NotFound(w, r)
-		}
-	})))
+		rest.WithNotFoundHandler(
+			http.HandlerFunc(
+				func(w http.ResponseWriter, r *http.Request) {
+					if strings.HasPrefix(r.URL.Path, "/api/any/") {
+						fmt.Fprintf(w, "wildcard: %s", r.URL.Path)
+					} else {
+						http.NotFound(w, r)
+					}
+				},
+			),
+		),
+	)
 	defer engine.Stop()
 
 	engine.AddRoute(rest.Route{

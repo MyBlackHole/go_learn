@@ -1,0 +1,35 @@
+@startuml
+interface internalPromise {
+	+ Accept()
+	+ Reject()
+}
+note left: 抽象接口
+
+interface internalThrottle {
+	- allow() (internalPromise, error)
+	- doReq(req func() error, fallback func(err error) error, acceptable Acceptable) error
+}
+
+interface Cacher  {
+	+ Capacity() int
+	SetCapacity(capacity int)
+
+	Promote(n *Node)
+
+	Ban(n *Node)
+
+	Evict(n *Node)
+
+	EvictNS(ns uint64)
+
+	EvictAll()
+
+	Close() error
+}
+note left of Cacher::Capacity
+获取容量
+end note
+note left of Cacher::SetCapacity
+设置容量
+end note
+@enduml

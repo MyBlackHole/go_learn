@@ -8,11 +8,15 @@ import (
 )
 
 func main() {
-	executor := executors.NewBulkExecutor(func(items []interface{}) {
-		fmt.Println(len(items))
-	}, executors.WithBulkTasks(10))
+	executor := executors.NewBulkExecutor(
+		func(items []interface{}) {
+			fmt.Println(len(items))
+			fmt.Printf("%+v\n", items)
+		},
+		executors.WithBulkTasks(11),
+	)
 	for {
-		if err := executor.Add(1); err != nil {
+		if err := executor.Add(3); err != nil {
 			fmt.Println(err)
 			return
 		}

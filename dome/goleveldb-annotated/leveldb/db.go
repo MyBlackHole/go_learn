@@ -53,6 +53,7 @@ type DB struct {
 	frozenSeq       uint64
 
 	// Snapshot.
+	// 快照互斥锁
 	snapsMu sync.Mutex
 	// 维护 snapshot(快照) list 的作用是：
 	// 在进行 compaction(压缩) 时，如果某个 key 有多个版本，则使用链表中最小的 seq 与 key 的版本做比较
