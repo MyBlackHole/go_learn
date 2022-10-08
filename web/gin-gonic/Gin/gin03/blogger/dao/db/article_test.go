@@ -7,8 +7,8 @@ import (
 
 func init() {
 	addr := "root:root123@tcp(localhost:3306)/test?parseTime=true"
-	err:=Init(addr)
-	if err !=nil {
+	err                : = Init(addr)
+	if err !=         nil {
 		panic(err)
 	}
 	return
@@ -16,18 +16,27 @@ func init() {
 
 // 根据当前id 获取上一篇文章
 func TestGetPrevArticleById(t *testing.T) {
-		info,err:=GetPrevArticleById(3)
-		if err !=nil {
-			panic(err)
-		}
-		fmt.Println(info)
+	      err                : = GetPrevArticleById(3)
+	=         nil {
+err)
+
+ntln(info)
 }
 
 // 根据当前的文章id 获取下一篇文章
-func  TestGetNextArticleById(t  *testing.T){
-	info,err := GetNextArticleById(2)
-	if err !=nil {
+funcNextArticleById(t tsigT        
+	info,         err := GetNextArticleById(2)
+	if err !=         nil {
 		panic(err)
 	}
 	fmt.Println(info)
 }
+
+
+
+
+
+
+
+
+
