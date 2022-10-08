@@ -15,6 +15,7 @@ func CurrentDateNotFormat() string {
 
 func CurrentDate() string {
 	timeUnix := time.Now().Unix()
+	fmt.Println(time.Unix(timeUnix, 0), "Unix")
 	return time.Unix(timeUnix, 0).Format("2006-01-02")
 }
 
@@ -48,18 +49,31 @@ func TestDateTime() {
 }
 
 func main() {
+	fmt.Println(time.Now())
+	fmt.Println(time.Now().UTC())
+	fmt.Println()
+
+	fmt.Println(time.Now())
 	TestDateTime()
 	now := int(time.Now().Unix())
 	fmt.Println(now)
+
+	fmt.Println(time.Now())
 
 	fmt.Println()
 	time.Parse(time.Now().Format("2006-01-02"), "2006-01-02")
 	t := time.Date(2022, 7, 26, 12, 25, 0, 0, time.UTC)
 	fmt.Println(t.String())
 	t1 := time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), time.Local)
-	fmt.Println(t1.String())
+	fmt.Println(t1, "t1")
 
 	fmt.Println(time.Date(2022, 7, 26, 12, 25, 0, 0, time.UTC).Location().String())
 
 	fmt.Println(t1.Weekday())
+	t, err := time.Parse(time.RFC3339, "2022-06-07T16:20:03+00:00")
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Println(t)
 }

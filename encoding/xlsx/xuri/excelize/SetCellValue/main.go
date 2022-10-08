@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-  excelize.Style.
+	// excelize.Style.
 	f := excelize.NewFile()
 	// Create a new sheet.
 	index := f.NewSheet("Sheet2")

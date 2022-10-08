@@ -15,6 +15,7 @@ func main() {
 	t := reflect.TypeOf(u).Elem()
 	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)
+		fmt.Println(f.Name)
 		fmt.Println(f.Tag, f.Tag.Get("json"))
 	}
 }

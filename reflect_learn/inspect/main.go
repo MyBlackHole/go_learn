@@ -36,7 +36,6 @@ func inspectStruct(u interface{}) {
 
 		case reflect.String:
 			fmt.Printf("field:%d type:%s value:%q\n", i, field.Type().Name(), field.String())
-
 		default:
 			fmt.Printf("field:%d unhandled kind:%s\n", i, field.Kind())
 		}

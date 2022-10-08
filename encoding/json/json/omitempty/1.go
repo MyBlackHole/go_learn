@@ -6,7 +6,8 @@ import (
 )
 
 type App struct {
-	Id string `json:"id"`
+	Id string `json:"id,omitempty"`
+	A  string `json:"a,omitempty"`
 }
 
 type Org struct {
@@ -14,8 +15,12 @@ type Org struct {
 }
 
 type AppWithOrg struct {
-	App
-	Org
+	App *App    `json:"app,omitempty"`
+	Org Org     `json:"org,omitempty"`
+	S   *string `json:"s"`
+	R   *string `json:"r,omitempty"`
+	E   string  `json:"e"`
+	D   string  `json:"d,omitempty"`
 }
 
 type AppList struct {
@@ -44,7 +49,8 @@ func main() {
 	// 	},
 	// }
 
-	var a *AppWithOrg
+	var a AppWithOrg
+	a.App = &App{Id: "sdjf"}
 
 	data, _ = json.Marshal(a)
 	fmt.Println(string(data))

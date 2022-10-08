@@ -36,25 +36,25 @@ type Analysis struct {
 }
 
 type User struct {
-	UID              interface{}    `json:"uid"`
-	URL              int    `json:"url"`
-	Name             string   `json:"name"`
-	NickName         int      `json:"nickname"`
-	ProfileImgURL    string   `json:"profile_img_url"`
-	Gender           string   `json:"gender"`
-	LangCode         string   `json:"lang_code"`
-	Level            int      `json:"level"`
-	Verified         int      `json:"verified"`
-	CreatedAt        int      `json:"created_at"`
-	VerifiedType     int      `json:"verified_type"`
-	VerifiedReason   interface{}      `json:"verified_reason"`
-	DescriPtion      string   `json:"description"`
-	Location         []string `json:"location"`
-	LocationCode     string   `json:"location_code"`
-	FollowersCount   int      `json:"followers_count"`
-	BiFollowersCount int      `json:"bi_followers_count"`
-	StatusesCount    int      `json:"statuses_count"`
-	FriendsCount     int      `json:"friends_count"`
+	UID              interface{} 
+	URL              int                                                                          `json:"url"`
+	Name             string                                             `json:"name"`
+	NickName         int                                                `json:"nickname"`
+	ProfileImgURL    string      `json:"profile_img_url"`
+	Gender           string      `json:"gender"`
+	LangCode         string      `json:"lang_code"`
+	Level            int         `json:"level"`
+	Verified         int         `json:"verified"`
+	CreatedAt        int         `json:"created_at"`
+	VerifiedType     int         `json:"verified_type"`
+	VerifiedReason   interface{} `json:"verified_reason"`
+	DescriPtion      string      `json:"description"`
+	Location         []string    `json:"location"`
+	LocationCode     string      `json:"location_code"`
+	FollowersCount   int         `json:"followers_count"`
+	BiFollowersCount int         `json:"bi_followers_count"`
+	StatusesCount    int         `json:"statuses_count"`
+	FriendsCount     int         `json:"friends_count"`
 }
 type Publisher struct {
 	SiteName string `json:"site_name"`
@@ -92,7 +92,7 @@ type Blog struct {
 	Gather       Gather    `json:"gather"`
 	User         User      `json:"user"`
 	Publisher    Publisher `json:"publisher"`
-	Retweeted    *Blog      `json:"retweeted"`
+	Retweeted    *Blog     `json:"retweeted"`
 }
 type Data struct {
 	Total int    `json:"total"`
@@ -166,15 +166,15 @@ type URunBlog struct {
 }
 
 func main() {
-// 	data := []byte(`
-// {
-//     "code": "10005",
-//     "data": null,
-//     "success": true,
-// 	"ok": true,
-//     "message": "exception..."
-// }
-// 		`)
+	// 	data := []byte(`
+	// {
+	//     "code": "10005",
+	//     "data": null,
+	//     "success": true,
+	// 	"ok": true,
+	//     "message": "exception..."
+	// }
+	// 		`)
 	data := []byte(`{
     "code": "0",
     "data": {
@@ -911,11 +911,11 @@ func main() {
 	var resp Resp
 
 	err := json.Unmarshal(data, &resp)
-    if err!=nil {
-        fmt.Print(err)
-    }
+	if err !=
+		
+	
 
-	for _, item :=range resp.Data.List{
+	for _, item :=              range r e s p . D a t a . L i s t {
 		fmt.Print(item.Gather.SiteName)
 		// switch {
 		// 	case item.Gather. == "微信":
@@ -928,3 +928,17 @@ func main() {
 	}
 	// fmt.Printf("%#v\n", resp)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
