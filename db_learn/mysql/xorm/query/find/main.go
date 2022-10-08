@@ -5,6 +5,7 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"xorm.io/builder"
 	"xorm.io/xorm"
 )
 
@@ -20,6 +21,8 @@ type User struct {
 
 func main() {
 	engine, _ := xorm.NewEngine("mysql", "root:12345@/test?charset=utf8")
+
+	fmt.Printf("%T\n", builder.Like{"sdfsf", "ksdjf"})
 
 	slcUsers := make([]User, 1)
 	engine.Where("age > ? and age < ?", 12, 30).Find(&slcUsers)
