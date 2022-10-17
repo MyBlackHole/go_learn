@@ -48,6 +48,11 @@ func TestDateTime() {
 	fmt.Println(CurrentDateTimeNotFormat()) //20200328_111126
 }
 
+func ParseYMDDate(dateTime string) time.Time {
+	dt, _ := time.Parse("2006-01-02", dateTime)
+	return dt
+}
+
 func main() {
 	fmt.Println(time.Now())
 	fmt.Println(time.Now().UTC())
@@ -76,4 +81,6 @@ func main() {
 		return
 	}
 	fmt.Println(t)
+
+	fmt.Printf("%s\n", ParseYMDDate("2022-09-27"))
 }
