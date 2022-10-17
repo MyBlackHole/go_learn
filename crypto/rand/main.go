@@ -2,10 +2,12 @@ package main
 
 import (
 	"crypto/rand"
+	"encoding/binary"
 	"fmt"
 )
 
 func main() {
-	num1 := rand.Int()
-	fmt.Println(num1)
+	var n int32
+	binary.Read(rand.Reader, binary.LittleEndian, &n)
+	fmt.Println(n)
 }

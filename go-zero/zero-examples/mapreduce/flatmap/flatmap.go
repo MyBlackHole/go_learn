@@ -18,12 +18,16 @@ var (
 
 func main() {
 	var allFriends []string
-	mr.ForEach(func(source chan<- interface{}) {
-		for _, each := range persons {
-			source <- each
-		}
-	}, func(item interface{}) {
-		allFriends = append(allFriends, friends[item.(string)]...)
-	}, mr.WithWorkers(100))
+	mr.ForEach(
+		func(source chan<- interface{}) {
+			for _, each := range persons {
+				source <- each
+			}
+		},
+		func(item interface{}) {
+			allFriends = append(allFriends, friends[item.(string)]...)
+		},
+		mr.WithWorkers(100),
+	)
 	fmt.Println(allFriends)
 }
