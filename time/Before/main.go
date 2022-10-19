@@ -14,4 +14,9 @@ func main() {
 	} else {
 		fmt.Println("t1time hasn't come yet")
 	}
+
+	t2str := "12:08"
+	t2time, _ := time.ParseInLocation("15:04", t2str, time.Local)
+	fmt.Println(t2time)
+	fmt.Print(t2time.Hour())
 }

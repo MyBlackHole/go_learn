@@ -28,12 +28,12 @@ type Repo struct {
 	Name string `json:"name"`
 	Star int    `json:"stargazers_count"`
 }
+
 type ErrorMessage struct {
 	Message string `json:"message"`
 }
 
 func findTheMostPopularRepo(username string) (repo string, star int, err error) {
-
 	var popularRepo Repo
 	var resp *req.Response
 

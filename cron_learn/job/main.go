@@ -54,7 +54,8 @@ func test() {
 
 		local, _ := time.LoadLocation("Asia/Shanghai")
 		interval := cron.New(cron.WithLocation(local), cron.WithSeconds())
-		timeout := "0 */1 * * * *"
+		// 周六到周日
+		timeout := "TZ=US/Pacific * * * * * 3"
 		_, err := interval.AddFunc(timeout, func() {
 			num++
 			log.Println("全局定时器已开启=num=", num)
