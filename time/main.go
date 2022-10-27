@@ -83,4 +83,15 @@ func main() {
 	fmt.Println(t)
 
 	fmt.Printf("%s\n", ParseYMDDate("2022-09-27"))
+
+	l, _ := time.LoadLocation("America/Los_Angeles")
+
+	fmt.Printf("%d\n", int(time.Now().Weekday()))
+	fmt.Printf("%d\n", int(time.Now().In(l).Weekday()))
+
+	fmt.Println(ParseInLocation("24:00"))
+}
+
+func ParseInLocation(timeStr string) (time.Time, error) {
+	return time.ParseInLocation("15:04", timeStr, time.Local)
 }

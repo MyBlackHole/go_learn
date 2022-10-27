@@ -37,6 +37,8 @@ func main() {
 }
 
 func test() {
+	fmt.Println((6 + 1) % 7)
+	fmt.Println((0 + 7) % 7)
 	go func() {
 
 		// cron-v1时间写法示例timeout := "秒 分 时 日 月 年"
@@ -52,10 +54,12 @@ func test() {
 
 		num := 0 // 运行次数
 
-		local, _ := time.LoadLocation("Asia/Shanghai")
-		interval := cron.New(cron.WithLocation(local), cron.WithSeconds())
+		// local, _ := time.LoadLocation("Asia/Shanghai")
+		// interval := cron.New()
+		interval := cron.New(cron.WithSeconds())
 		// 周六到周日
-		timeout := "TZ=US/Pacific * * * * * 3"
+		// timeout := "* 24 11 * * *"
+		timeout := "TZ=America/Los_Angeles * 12 23 * * 6"
 		_, err := interval.AddFunc(timeout, func() {
 			num++
 			log.Println("全局定时器已开启=num=", num)
@@ -64,4 +68,5 @@ func test() {
 		log.Println("全局定时器运行结果，error=", err)
 		interval.Start()
 	}()
+	fmt.Print("kkkk")
 }
