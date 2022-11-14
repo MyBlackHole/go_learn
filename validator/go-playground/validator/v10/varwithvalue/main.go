@@ -15,3 +15,5 @@ func main() {
 
 	fmt.Println(validate.VarWithValue(name1, name2, "nefield"))
 }
+
+

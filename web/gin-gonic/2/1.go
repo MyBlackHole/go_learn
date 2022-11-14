@@ -1,12 +1,12 @@
 package main
 
 import (
-	mt"
-	ithub.com/gin-gonic/gin"
-	et/http"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
-func getRouteParams(c *gin.Context) 
+func getRouteParams(c *gin.Context) {
 	// 获取路由参数为name的值
 	// http://127.0.0.1:8888/route/card  输出 card
 	name := c.Param("name")
@@ -81,12 +81,9 @@ func main() {
 	router.GET("/route/:name/*job", getRoutePregParams)
 
 	// 获取queryString
-	
-	 获取queryString
-	uter.GET("/", getParams)
-	 获取同名参数
+	router.GET("/", getParams)
+	// 获取同名参数
 	router.GET("/repeat", getRepeatParams)
 
 	router.Run(":8888")
 }
-
