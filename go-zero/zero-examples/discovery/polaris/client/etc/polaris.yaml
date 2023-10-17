@@ -1,2 +1,0 @@
-Name: client
-Target: polaris://127.0.0.1:8091/EchoServerZero?timeout=5000s

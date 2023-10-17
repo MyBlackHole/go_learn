@@ -6,7 +6,22 @@ import (
 )
 
 func main() {
-	L02()
+	// L02()
+    parse_oss_xml()
+}
+
+func parse_oss_xml() {
+    xml := etree.NewDocument()
+    if err := xml.ReadFromFile("./oss_list.xml"); err != nil {
+        panic(err)
+    }
+
+    root := xml.Root()
+    fmt.Println(root.Attr)
+
+	// root := doc.SelectElement("Contents")
+	childElements := root.ChildElements()
+    fmt.Println(len(childElements))
 }
 
 func test() {

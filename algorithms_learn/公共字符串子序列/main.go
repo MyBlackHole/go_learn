@@ -19,7 +19,7 @@ func LCS(s1, s2 string) (isRune []rune, notIsRune []rune) {
 
 	if len(s1) == 0 || len(s2) == 0 {
 		notIsRune = []rune(s1)
-		return  
+		return
 	}
 
 	runeS1 := []rune(s1)
@@ -76,11 +76,10 @@ func LCS(s1, s2 string) (isRune []rune, notIsRune []rune) {
 		}
 	}
 	var ii int
-	i := len(runeS1)-1
-	j := len(runeS2)-1
+	i := len(runeS1) - 1
+	j := len(runeS2) - 1
 
-
-	for ; List[i][j].count > 0; {
+	for List[i][j].count > 0 {
 		isRune = append(isRune, List[i][j].value)
 		ii = List[i][j].x + 1
 		j = List[i][j].y
@@ -95,7 +94,7 @@ func LCS(s1, s2 string) (isRune []rune, notIsRune []rune) {
 		notIsRune = append(notIsRune, runeS1[i])
 	}
 
-	return 
+	return
 }
 
 func testLCS() {
@@ -103,13 +102,13 @@ func testLCS() {
 	fmt.Print(string(isRune), string(notIsRune))
 }
 
-type carStyle struct {
+type CarStyle struct {
 	STYLE string
 	BRAND string
 	MODEL string
 }
 
-type lcsResp struct {
+type LcsResp struct {
 	S1    string
 	S2    string
 	COUNT int

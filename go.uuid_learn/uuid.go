@@ -20,7 +20,6 @@ package main
 import (
 	"github.com/satori/go.uuid"
 )
-
 func main() {
 	// 创建 UUID v4
 	u1 := uuid.NewV4()

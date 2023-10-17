@@ -27,4 +27,6 @@ func main() {
 	//	fmt.Println("通信出错",err)
 	//}
 
+    DB.Exec()
+
 }

@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/antchfx/xmlquery"
 	"strings"
+
+	"github.com/antchfx/xmlquery"
+	// "github.com/zeromicro/go-zero/core/filex"
 )
 
 func main() {
@@ -40,4 +42,6 @@ func main() {
 	for i, n := range xmlquery.Find(doc, "//item/title") {
 		fmt.Printf("#%d %s\n", i, n.InnerText())
 	}
+
+    // filex.NewRangeReader()
 }
