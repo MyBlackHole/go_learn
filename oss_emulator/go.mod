@@ -2,7 +2,10 @@ module emulator
 
 go 1.21.6
 
-require github.com/urfave/cli/v2 v2.27.1
+require (
+	github.com/minio/mux v1.9.0
+	github.com/urfave/cli/v2 v2.27.1
+)
 
 require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect

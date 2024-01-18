@@ -1,6 +1,8 @@
 package emulator
 
 import (
+	"fmt"
+
 	cli "github.com/urfave/cli/v2"
 )
 
@@ -10,6 +12,7 @@ var serverCmd = &cli.Command{
 	// Flags:  append(ServerFlags, GlobalFlags...),
     // 执行此命令参数是执行 serverMain
 	Action: serverMain,
+	Flags: ServerFlags,
 	CustomHelpTemplate: `NAME:
   {{.HelpName}} - {{.Usage}}
 
@@ -52,5 +55,18 @@ EXAMPLES:
 
 
 func serverMain(ctx *cli.Context) error {
-    return nil
+    fmt.Println("start server main")
+
+    err := buildServerCtxt(ctx, &globalServerCtxt)
+
+	if err != nil {
+        fmt.Errorf("buildServerCtxt error: %s\n", err)
+	}
+
+    handler, err := configureServerHandler(globalServerCtxt)
+	if err != nil {
+        fmt.Errorf("configureServerHandler error: %s\n", err)
+	}
+
+    return listenAndServe(globalServerCtxt, handler)
 }
