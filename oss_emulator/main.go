@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"emulator/emulator"
+	"emulator/cmd"
 )
 
 func main() {

@@ -5,6 +5,7 @@ go 1.21.6
 require (
 	github.com/minio/mux v1.9.0
 	github.com/urfave/cli/v2 v2.27.1
+	github.com/valyala/bytebufferpool v1.0.0
 )
 
 require (

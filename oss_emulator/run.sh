@@ -34,3 +34,11 @@ foo%
 <
 * Connection #0 to host 127.0.0.1 left intact
 foo%
+
+
+# 静态编译
+go build -ldflags="-s -w"
+
+# debug
+sudo /home/black/go/bin/dlv exec ./emulator -- server --port 80
+./ossutil -e 127.0.0.1 -i 1234 -k 1234 --loglevel=debug mb oss://wdg1

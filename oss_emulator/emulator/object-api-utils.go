@@ -1,3 +1,0 @@
-package emulator
-
-const SlashSeparator = "/"
