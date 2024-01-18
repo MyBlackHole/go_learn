@@ -16,3 +16,21 @@ curl 127.0.0.1:9000/foo -v
 <
 * Connection #0 to host 127.0.0.1 left intact
 foo%
+
+
+❯ curl 127.0.0.1:9000/ -v
+*   Trying 127.0.0.1:9000...
+* Connected to 127.0.0.1 (127.0.0.1) port 9000 (#0)
+> GET / HTTP/1.1
+> Host: 127.0.0.1:9000
+> User-Agent: curl/7.88.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Access-Control-Allow-Origin: *
+< Date: Thu, 18 Jan 2024 06:40:52 GMT
+< Content-Length: 3
+< Content-Type: text/plain; charset=utf-8
+<
+* Connection #0 to host 127.0.0.1 left intact
+foo%

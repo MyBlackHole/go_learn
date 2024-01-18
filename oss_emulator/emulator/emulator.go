@@ -1,18 +1,19 @@
 package emulator
 
 import (
+	"context"
 	"fmt"
 
 	cli "github.com/urfave/cli/v2"
 )
 
 var serverCmd = &cli.Command{
-	Name:   "server",
-	Usage:  "start object storage server",
+	Name:  "server",
+	Usage: "start object storage server",
 	// Flags:  append(ServerFlags, GlobalFlags...),
-    // 执行此命令参数是执行 serverMain
+	// 执行此命令参数是执行 serverMain
 	Action: serverMain,
-	Flags: ServerFlags,
+	Flags:  ServerFlags,
 	CustomHelpTemplate: `NAME:
   {{.HelpName}} - {{.Usage}}
 
@@ -52,21 +53,29 @@ EXAMPLES:
 `,
 }
 
-
-
 func serverMain(ctx *cli.Context) error {
-    fmt.Println("start server main")
+	fmt.Println("start server main")
 
-    err := buildServerCtxt(ctx, &globalServerCtxt)
+	err := buildServerCtxt(ctx, &globalServerCtxt)
 
 	if err != nil {
-        fmt.Errorf("buildServerCtxt error: %s\n", err)
+		fmt.Errorf("buildServerCtxt error: %s\n", err)
 	}
 
-    handler, err := configureServerHandler(globalServerCtxt)
+	handler, err := configureServerHandler(globalServerCtxt)
 	if err != nil {
-        fmt.Errorf("configureServerHandler error: %s\n", err)
+		fmt.Errorf("configureServerHandler error: %s\n", err)
 	}
 
-    return listenAndServe(globalServerCtxt, handler)
+	_, err = newObjectLayer(GlobalContext, globalServerCtxt)
+	if err != nil {
+		fmt.Errorf("configureServerHandler error: %s\n", err)
+	}
+	return listenAndServe(globalServerCtxt, handler)
+}
+
+func newObjectLayer(ctx context.Context, server serverCtxt) (newObject ObjectLayer, err error) {
+	object := &Objects{}
+	setObjectLayer(object)
+	return
 }
