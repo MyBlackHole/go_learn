@@ -42,6 +42,7 @@ const (
 	ErrInvalidCopyDest
 	ErrInternalError
 	ErrServerNotInitialized
+    ErrMissingContentLength
 )
 
 var noError = APIError{}

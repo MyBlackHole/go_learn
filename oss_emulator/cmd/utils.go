@@ -2,11 +2,13 @@ package emulator
 
 import (
 	"context"
+    "time"
 	"github.com/minio/mux"
 	"github.com/valyala/bytebufferpool"
 	"net/http"
 	"net/url"
 	"path"
+    "strings"
 )
 
 const (
@@ -202,4 +204,16 @@ func pathNeedsClean(path []byte) bool {
 
 func hasSuffixByte(s string, suffix byte) bool {
 	return len(s) > 0 && s[len(s)-1] == suffix
+}
+
+func unescapePath(p string) (string, error) {
+	return unescapeGeneric(p, url.PathUnescape)
+}
+
+func HasSuffix(s string, suffix string) bool {
+	return strings.HasSuffix(s, suffix)
+}
+
+func UTCNow() time.Time {
+	return time.Now().UTC()
 }

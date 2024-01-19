@@ -59,3 +59,7 @@ func httpTrace(f http.HandlerFunc, logBody bool) http.HandlerFunc {
 func httpTraceAll(f http.HandlerFunc) http.HandlerFunc {
 	return httpTrace(f, true)
 }
+
+func httpTraceHdrs(f http.HandlerFunc) http.HandlerFunc {
+	return httpTrace(f, false)
+}

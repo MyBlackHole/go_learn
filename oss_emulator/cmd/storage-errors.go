@@ -26,6 +26,12 @@ var errVolumeNotFound = StorageErr("volume not found")
 
 var errDiskAccessDenied = StorageErr("drive access denied")
 
+var errLessData = StorageErr("less data available than what was requested")
+
+var errMoreData = StorageErr("more data was sent than what was advertised")
+
+var errIsNotRegular = StorageErr("not of regular file type")
+
 func osIsPermission(err error) bool {
 	return errors.Is(err, os.ErrPermission) || errors.Is(err, syscall.EROFS)
 }

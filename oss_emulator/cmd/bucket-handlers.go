@@ -7,7 +7,7 @@ import (
 
 const (
 	xOSSIOErrCodeHeader = "x-oss-error-code"
-	xOSSErrDescHeader = "x-oss-error-desc"
+	xOSSErrDescHeader   = "x-oss-error-desc"
 )
 
 func (api objectAPIHandlers) HoleWorld(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +46,6 @@ func (api objectAPIHandlers) PutBucketHandler(w http.ResponseWriter, r *http.Req
 
 	writeSuccessResponseHeadersOnly(w)
 }
-
 
 func (api objectAPIHandlers) HeadBucketHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := newContext(r, w, "HeadBucketHandler")

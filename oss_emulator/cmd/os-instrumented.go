@@ -3,7 +3,9 @@ package emulator
 import (
 	"os"
 	"strings"
+    "syscall"
 )
+
 
 func Lstat(name string) (info os.FileInfo, err error) {
 	return os.Lstat(name)
@@ -86,4 +88,12 @@ func Mkdir(dirPath string, mode os.FileMode) (err error) {
 
 func Access(name string) (err error) {
 	return access(name)
+}
+
+func OpenFile(name string, flag int, perm os.FileMode) (f *os.File, err error) {
+	return os.OpenFile(name, flag, perm)
+}
+
+func Fdatasync(f *os.File) error {
+	return syscall.Fdatasync(int(f.Fd()))
 }

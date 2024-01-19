@@ -26,6 +26,8 @@ func registerAPIRouter(router *mux.Router) {
 
 	bucketRouter := apiRouter.PathPrefix("/{bucket}").Subrouter()
 
+    bucketRouter.Methods(http.MethodPut).Path("/{object:.+}").HandlerFunc(httpTraceHdrs(api.PutObjectHandler))
+
 	bucketRouter.Methods(http.MethodPut).HandlerFunc(httpTraceAll(api.PutBucketHandler))
 
 	apiRouter.MethodNotAllowedHandler = httpTraceAll(methodNotAllowedHandler("OSS"))
