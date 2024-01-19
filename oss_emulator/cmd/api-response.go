@@ -16,8 +16,8 @@ const (
 	ContentLength   = "Content-Length"
 	ServerInfo      = "Server"
 	AmzBucketRegion = "X-Amz-Bucket-Region"
-	AcceptRanges       = "Accept-Ranges"
-	Location           = "Location"
+	AcceptRanges    = "Accept-Ranges"
+	Location        = "Location"
 
 	AmzServerSideEncryption                      = "X-Amz-Server-Side-Encryption"
 	AmzServerSideEncryptionKmsID                 = AmzServerSideEncryption + "-Aws-Kms-Key-Id"
@@ -28,10 +28,9 @@ const (
 	AmzServerSideEncryptionCopyCustomerAlgorithm = "X-Amz-Copy-Source-Server-Side-Encryption-Customer-Algorithm"
 	AmzServerSideEncryptionCopyCustomerKey       = "X-Amz-Copy-Source-Server-Side-Encryption-Customer-Key"
 	AmzServerSideEncryptionCopyCustomerKeyMD5    = "X-Amz-Copy-Source-Server-Side-Encryption-Customer-Key-Md5"
-	AmzMetaUnencryptedContentLength = "X-Amz-Meta-X-Amz-Unencrypted-Content-Length"
-	AmzMetaUnencryptedContentMD5    = "X-Amz-Meta-X-Amz-Unencrypted-Content-Md5"
+	AmzMetaUnencryptedContentLength              = "X-Amz-Meta-X-Amz-Unencrypted-Content-Length"
+	AmzMetaUnencryptedContentMD5                 = "X-Amz-Meta-X-Amz-Unencrypted-Content-Md5"
 )
-
 
 func RemoveSensitiveHeaders(h http.Header) {
 	h.Del(AmzServerSideEncryptionCustomerKey)
@@ -88,4 +87,10 @@ func errorResponseHandler(w http.ResponseWriter, r *http.Request) {
 			HTTPStatusCode: http.StatusBadRequest,
 		}, r.URL)
 	}
+}
+
+func writeErrorResponseHeadersOnly(w http.ResponseWriter, err APIError) {
+	w.Header().Set(xOSSIOErrCodeHeader, err.Code)
+	w.Header().Set(xOSSErrDescHeader, "\""+err.Description+"\"")
+	writeResponse(w, err.HTTPStatusCode, nil, mimeNone)
 }

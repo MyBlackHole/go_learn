@@ -10,17 +10,16 @@ import (
 	cli "github.com/urfave/cli/v2"
 )
 
-
 var ServerFlags = []cli.Flag{
 	&cli.StringFlag{
-		Name:   "port, p",
-		Value:  DefaultPort,
-		Usage:  "监听端口设置",
+		Name:  "port, p",
+		Value: DefaultPort,
+		Usage: "监听端口设置",
 	},
 	&cli.StringFlag{
-		Name:   "dir, d",
-		Value:  DefaultDir,
-		Usage:  "挂载目录",
+		Name:  "disk, d",
+		Value: DefaultDir,
+		Usage: "挂载目录",
 	},
 	&cli.BoolFlag{
 		Name:   "debug",
@@ -28,7 +27,6 @@ var ServerFlags = []cli.Flag{
 		Hidden: true,
 	},
 }
-
 
 var HelpTemplate = `NAME:
   {{.Name}} - {{.Usage}}
@@ -49,10 +47,9 @@ VERSION:
   {{.Version}}
 `
 
-
 func newApp(name string) *cli.App {
 	commands := []*cli.Command{}
-    commands = append(commands, serverCmd)
+	commands = append(commands, serverCmd)
 
 	cli.VersionPrinter = printVersion
 
@@ -75,7 +72,7 @@ func versionBanner(c *cli.Context) io.Reader {
 }
 
 func printVersion(c *cli.Context) {
-	_,_ = io.Copy(c.App.Writer, versionBanner(c))
+	_, _ = io.Copy(c.App.Writer, versionBanner(c))
 }
 
 func Main(args []string) {

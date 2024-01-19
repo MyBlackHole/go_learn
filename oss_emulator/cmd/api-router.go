@@ -24,7 +24,7 @@ func registerAPIRouter(router *mux.Router) {
 
 	apiRouter := router.PathPrefix(SlashSeparator).Subrouter()
 
-    bucketRouter := apiRouter.PathPrefix("/{bucket}").Subrouter()
+	bucketRouter := apiRouter.PathPrefix("/{bucket}").Subrouter()
 
 	bucketRouter.Methods(http.MethodPut).HandlerFunc(httpTraceAll(api.PutBucketHandler))
 

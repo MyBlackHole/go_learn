@@ -77,5 +77,11 @@ func serverMain(ctx *cli.Context) error {
 func newObjectLayer(ctx context.Context, server serverCtxt) (newObject ObjectLayer, err error) {
 	object := &Objects{}
 	setObjectLayer(object)
+    disk, err := newStorageAPI(server.Disk)
+    if err != nil {
+        return
+    }
+    object.disk = disk
+    globalLocalDrive = disk
 	return
 }

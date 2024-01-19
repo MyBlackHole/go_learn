@@ -11,6 +11,7 @@ import (
 
 var errInvalidArgument = errors.New("Invalid arguments specified")
 
+
 type APIErrorCode int
 
 type errorCodeMap map[APIErrorCode]APIError

@@ -2,16 +2,16 @@ package emulator
 
 import (
 	"context"
-	"github.com/valyala/bytebufferpool"
 	"github.com/minio/mux"
+	"github.com/valyala/bytebufferpool"
 	"net/http"
 	"net/url"
 	"path"
 )
 
 const (
-	slashSeparator = "/"
-    SlashSeparatorChar = '/'
+	slashSeparator     = "/"
+	SlashSeparatorChar = '/'
 )
 
 type KeyVal struct {
@@ -111,7 +111,6 @@ func trimLeadingSlash(ep string) string {
 	return ep
 }
 
-
 func pathJoin(elem ...string) string {
 	sb := bytebufferpool.Get()
 	defer func() {
@@ -148,7 +147,6 @@ func pathJoinBuf(dst *bytebufferpool.ByteBuffer, elem ...string) string {
 	}
 	return dst.String()
 }
-
 
 func pathNeedsClean(path []byte) bool {
 	if len(path) == 0 {

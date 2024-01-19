@@ -1,7 +1,7 @@
 package emulator
 
 import (
-    "context"
+	"context"
 )
 
 var GlobalContext context.Context

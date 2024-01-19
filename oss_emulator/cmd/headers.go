@@ -1,9 +1,9 @@
 package emulator
 
 import (
-	"net/http"
 	"bytes"
 	"encoding/xml"
+	"net/http"
 )
 
 const (
@@ -24,4 +24,3 @@ func encodeResponse(response interface{}) []byte {
 	}
 	return buf.Bytes()
 }
-

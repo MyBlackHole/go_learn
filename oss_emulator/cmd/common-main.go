@@ -6,5 +6,6 @@ import (
 
 func buildServerCtxt(ctx *cli.Context, ctxt *serverCtxt) (err error) {
 	ctxt.Port = ctx.Int("port")
+	ctxt.Disk = ctx.String("disk")
 	return
 }

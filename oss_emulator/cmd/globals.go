@@ -1,17 +1,19 @@
 package emulator
 
 import (
-    "os"
+	"os"
 )
 
 type serverCtxt struct {
 	Port  int
-	Dir   string
+	Disk  string
 	Debug bool
 }
 
 var (
 	globalServerCtxt serverCtxt
 
-	globalOSSignalCh        = make(chan os.Signal, 1)
+	globalOSSignalCh = make(chan os.Signal, 1)
+
+	globalLocalDrive StorageAPI
 )

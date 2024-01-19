@@ -1,15 +1,15 @@
 package emulator
 
 import (
-    "net/http"
-	"runtime"
+	"net/http"
 	"reflect"
-    "strings"
+	"runtime"
+	"strings"
 )
 
 type ContextTraceType string
-const ContextTraceKey = ContextTraceType("ctx-trace-info")
 
+const ContextTraceKey = ContextTraceType("ctx-trace-info")
 
 type TraceCtxt struct {
 	RequestRecorder  *RequestRecorder
@@ -18,7 +18,6 @@ type TraceCtxt struct {
 	FuncName string
 	AmzReqID string
 }
-
 
 func getOpName(name string) (op string) {
 	op = strings.TrimPrefix(name, "github.com/minio/minio/cmd.")
@@ -37,7 +36,6 @@ func getOpName(name string) (op string) {
 	op = strings.Replace(op, "-fm", "", 1)
 	return op
 }
-
 
 // http 跟踪
 func httpTrace(f http.HandlerFunc, logBody bool) http.HandlerFunc {
