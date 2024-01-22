@@ -1,6 +1,7 @@
 package emulator
 
 import (
+	"encoding/xml"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -93,4 +94,49 @@ func writeErrorResponseHeadersOnly(w http.ResponseWriter, err APIError) {
 	w.Header().Set(xOSSIOErrCodeHeader, err.Code)
 	w.Header().Set(xOSSErrDescHeader, "\""+err.Description+"\"")
 	writeResponse(w, err.HTTPStatusCode, nil, mimeNone)
+}
+
+type Owner struct {
+	ID          string
+	DisplayName string
+}
+
+type Bucket struct {
+	Name         string
+	CreationDate string
+}
+
+type ListBucketsResponse struct {
+	XMLName xml.Name `xml:"http://s3.amazonaws.com/doc/2006-03-01/ ListAllMyBucketsResult" json:"-"`
+
+	Owner Owner
+
+	Buckets struct {
+		Buckets []Bucket `xml:"Bucket"`
+	}
+}
+
+func generateListBucketsResponse(buckets []BucketInfo) ListBucketsResponse {
+	listbuckets := make([]Bucket, 0, len(buckets))
+	data := ListBucketsResponse{}
+	owner := Owner{
+		ID:          globalOssDefaultOwnerID,
+		DisplayName: "aio-oss",
+	}
+
+	for _, bucket := range buckets {
+		listbuckets = append(listbuckets, Bucket{
+			Name:         bucket.Name,
+			CreationDate: ISO8601Format(bucket.Created.UTC()),
+		})
+	}
+
+	data.Owner = owner
+	data.Buckets.Buckets = listbuckets
+
+	return data
+}
+
+func writeSuccessResponseXML(w http.ResponseWriter, response []byte) {
+	writeResponse(w, http.StatusOK, response, mimeXML)
 }

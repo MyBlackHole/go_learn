@@ -5,7 +5,8 @@ import (
 )
 
 const (
-	ETag = "ETag"
+	ETag         = "ETag"
+	LastModified = "Last-Modified"
 )
 
 func setPutObjHeaders(w http.ResponseWriter, objInfo ObjectInfo, delete bool) {

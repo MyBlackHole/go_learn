@@ -32,6 +32,10 @@ var errMoreData = StorageErr("more data was sent than what was advertised")
 
 var errIsNotRegular = StorageErr("not of regular file type")
 
+var errUnsupportedDisk = StorageErr("drive does not support O_DIRECT")
+
+var errDiskNotFound = StorageErr("drive not found")
+
 func osIsPermission(err error) bool {
 	return errors.Is(err, os.ErrPermission) || errors.Is(err, syscall.EROFS)
 }
@@ -126,4 +130,8 @@ func isSysErrInvalidArg(err error) bool {
 
 func isSysErrNoSpace(err error) bool {
 	return errors.Is(err, syscall.ENOSPC)
+}
+
+func isSysErrTooManySymlinks(err error) bool {
+	return errors.Is(err, syscall.ELOOP)
 }

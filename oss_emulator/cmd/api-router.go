@@ -26,9 +26,18 @@ func registerAPIRouter(router *mux.Router) {
 
 	bucketRouter := apiRouter.PathPrefix("/{bucket}").Subrouter()
 
+    // 未实现
+    bucketRouter.Methods(http.MethodPost).Path("/{object:.+}").HandlerFunc(httpTraceAll(api.NewMultipartUploadHandler)).Queries("uploads", "")
+
+    bucketRouter.Methods(http.MethodHead).Path("/{object:.+}").HandlerFunc(httpTraceHdrs(api.HeadObjectHandler))
+
     bucketRouter.Methods(http.MethodPut).Path("/{object:.+}").HandlerFunc(httpTraceHdrs(api.PutObjectHandler))
 
+	bucketRouter.Methods(http.MethodHead).HandlerFunc(httpTraceAll(api.HeadBucketHandler))
+
 	bucketRouter.Methods(http.MethodPut).HandlerFunc(httpTraceAll(api.PutBucketHandler))
+
+	apiRouter.Methods(http.MethodGet).Path(SlashSeparator).HandlerFunc(httpTraceAll(api.ListBucketsHandler))
 
 	apiRouter.MethodNotAllowedHandler = httpTraceAll(methodNotAllowedHandler("OSS"))
 }

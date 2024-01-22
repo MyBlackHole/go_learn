@@ -10,25 +10,8 @@ const (
 	xOSSErrDescHeader   = "x-oss-error-desc"
 )
 
-func (api objectAPIHandlers) HoleWorld(w http.ResponseWriter, r *http.Request) {
-	objectAPI := api.ObjectAPI()
-	if objectAPI == nil {
-	}
-
-	vars := mux.Vars(r)
-	bucket := vars["bucket"]
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	if r.Method == http.MethodOptions {
-		return
-	}
-
-	w.Write([]byte(bucket))
-	w.Write([]byte("foo"))
-}
-
 func (api objectAPIHandlers) PutBucketHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := newContext(r, w, "PutBucketHandler")
+	ctx := newContext(r, w, "PutBucket")
 
 	objectAPI := api.ObjectAPI()
 	if objectAPI == nil {
@@ -48,7 +31,7 @@ func (api objectAPIHandlers) PutBucketHandler(w http.ResponseWriter, r *http.Req
 }
 
 func (api objectAPIHandlers) HeadBucketHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := newContext(r, w, "HeadBucketHandler")
+	ctx := newContext(r, w, "HeadBucket")
 
 	objectAPI := api.ObjectAPI()
 	if objectAPI == nil {
@@ -66,4 +49,24 @@ func (api objectAPIHandlers) HeadBucketHandler(w http.ResponseWriter, r *http.Re
 	}
 
 	writeResponse(w, http.StatusOK, nil, mimeXML)
+}
+
+func (api objectAPIHandlers) ListBucketsHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := newContext(r, w, "ListBuckets")
+
+	objectAPI := api.ObjectAPI()
+	if objectAPI == nil {
+		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(ErrServerNotInitialized), r.URL)
+	}
+
+	listBuckets := objectAPI.ListBuckets
+
+	bucketsInfo, err := listBuckets(ctx)
+	if err != nil {
+		writeErrorResponse(ctx, w, toAPIError(ctx, err), r.URL)
+		return
+	}
+	response := generateListBucketsResponse(bucketsInfo)
+	encodedSuccessResponse := encodeResponse(response)
+	writeSuccessResponseXML(w, encodedSuccessResponse)
 }

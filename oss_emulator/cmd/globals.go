@@ -16,4 +16,6 @@ var (
 	globalOSSignalCh = make(chan os.Signal, 1)
 
 	globalLocalDrive StorageAPI
+
+	globalOssDefaultOwnerID      = "0000000000000000000000000000000000000000000000000000000000000000"
 )

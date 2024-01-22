@@ -1,5 +1,9 @@
 package emulator
 
+const (
+	oStorageFormatFile = "o.meta"
+)
+
 func (fi FileInfo) ToObjectInfo(bucket, object string) ObjectInfo {
 	objInfo := ObjectInfo{
 		IsDir:   HasSuffix(object, SlashSeparator),

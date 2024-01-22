@@ -37,9 +37,41 @@ func (o *Objects) PutObject(ctx context.Context, bucket string, object string, s
 	if err != nil {
 		return
 	}
-    fi.Size = size
-    fi.ModTime = UTCNow()
-    disk.WriteMetadata(ctx, bucket, object, fi)
+	fi.Size = size
+	fi.ModTime = UTCNow()
+	disk.WriteMetadata(ctx, bucket, object, fi)
 	objInfo = fi.ToObjectInfo(bucket, object)
+	return
+}
+
+func (o *Objects) GetObjectInfo(ctx context.Context, bucket, object string) (info ObjectInfo, err error) {
+	disk := o.disk
+
+	fi, err := disk.ReadMetadata(ctx, bucket, object)
+	if err != nil {
+		return
+	}
+
+	info = fi.ToObjectInfo(bucket, object)
+
+	return
+}
+
+func (o *Objects) ListBuckets(ctx context.Context) (buckets []BucketInfo, err error) {
+	disk := o.disk
+
+	buckets = make([]BucketInfo, 0, 32)
+	vols, err := disk.ListVols(ctx)
+	if err != nil {
+		return
+	}
+
+	for _, v := range vols {
+		bi := BucketInfo{
+			Name:    v.Name,
+			Created: v.Created,
+		}
+		buckets = append(buckets, bi)
+	}
 	return
 }
