@@ -1,6 +1,9 @@
 package emulator
 
 import (
+	"os/signal"
+    "syscall"
+    "os"
 	"context"
 	"fmt"
 
@@ -54,6 +57,9 @@ EXAMPLES:
 }
 
 func serverMain(ctx *cli.Context) error {
+	signal.Notify(globalOSSignalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
+    go handleSignals()
+
 	fmt.Println("start server main")
 
 	err := buildServerCtxt(ctx, &globalServerCtxt)

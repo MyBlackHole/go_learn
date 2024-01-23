@@ -4,7 +4,11 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/http"
+	"net/url"
+	"path/filepath"
 	"strconv"
+	"strings"
+	"unicode/utf8"
 )
 
 type mimeType string
@@ -31,6 +35,11 @@ const (
 	AmzServerSideEncryptionCopyCustomerKeyMD5    = "X-Amz-Copy-Source-Server-Side-Encryption-Customer-Key-Md5"
 	AmzMetaUnencryptedContentLength              = "X-Amz-Meta-X-Amz-Unencrypted-Content-Length"
 	AmzMetaUnencryptedContentMD5                 = "X-Amz-Meta-X-Amz-Unencrypted-Content-Md5"
+
+	maxObjectList  = 1000
+
+	dotdotComponent = ".."
+	dotComponent    = "."
 )
 
 func RemoveSensitiveHeaders(h http.Header) {
@@ -139,4 +148,77 @@ func generateListBucketsResponse(buckets []BucketInfo) ListBucketsResponse {
 
 func writeSuccessResponseXML(w http.ResponseWriter, response []byte) {
 	writeResponse(w, http.StatusOK, response, mimeXML)
+}
+
+func getListObjectsArgs(values url.Values) (prefix, marker, delimiter string, maxkeys int, encodingType string, errCode APIErrorCode) {
+	errCode = ErrNone
+
+	if values.Get("max-keys") != "" {
+		var err error
+		if maxkeys, err = strconv.Atoi(values.Get("max-keys")); err != nil {
+			errCode = ErrInvalidMaxKeys
+			return
+		}
+	} else {
+		maxkeys = maxObjectList
+	}
+
+	prefix = values.Get("prefix")
+	marker = values.Get("marker")
+	delimiter = values.Get("delimiter")
+	encodingType = values.Get("encoding-type")
+	return
+}
+
+
+func validateListObjectsArgs(prefix, marker, delimiter, encodingType string, maxKeys int) APIErrorCode {
+	if maxKeys < 0 {
+		return ErrInvalidMaxKeys
+	}
+
+	if encodingType != "" {
+		if !strings.EqualFold(encodingType, "url") {
+			return ErrInvalidEncodingMethod
+		}
+	}
+
+	if !IsValidObjectPrefix(prefix) {
+		return ErrInvalidObjectName
+	}
+
+	if marker != "" && !HasPrefix(marker, prefix) {
+		return ErrNotImplemented
+	}
+
+	return ErrNone
+}
+
+func IsValidObjectPrefix(object string) bool {
+	if hasBadPathComponent(object) {
+		return false
+	}
+	if !utf8.ValidString(object) {
+		return false
+	}
+	if strings.Contains(object, `//`) {
+		return false
+	}
+	return !strings.ContainsRune(object, 0)
+}
+
+func hasBadPathComponent(path string) bool {
+	path = filepath.ToSlash(strings.TrimSpace(path))
+	for _, p := range strings.Split(path, SlashSeparator) {
+		switch strings.TrimSpace(p) {
+		case dotdotComponent:
+			return true
+		case dotComponent:
+			return true
+		}
+	}
+	return false
+}
+
+func HasPrefix(s string, prefix string) bool {
+	return strings.HasPrefix(s, prefix)
 }

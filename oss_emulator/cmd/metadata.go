@@ -1,8 +1,29 @@
 package emulator
 
+import (
+	"github.com/nutsdb/nutsdb"
+)
+
 const (
+    // 1MB
+    SegmentSize = 1024*1024
+
 	oStorageFormatFile = "o.meta"
 )
+
+func InitMeta(metaDir string) {
+    var err error
+    globalMetaDb, err = nutsdb.Open(
+		nutsdb.DefaultOptions,
+		nutsdb.WithDir(metaDir),
+		nutsdb.WithSegmentSize(SegmentSize), 
+	)
+	if err != nil {
+		panic(err)
+	}
+
+}
+
 
 func (fi FileInfo) ToObjectInfo(bucket, object string) ObjectInfo {
 	objInfo := ObjectInfo{

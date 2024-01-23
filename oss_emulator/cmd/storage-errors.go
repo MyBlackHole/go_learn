@@ -22,6 +22,8 @@ var errFaultyDisk = StorageErr("drive is faulty")
 
 var errDiskFull = StorageErr("drive path full")
 
+var errVolumeExists = StorageErr("volume already exists")
+
 var errVolumeNotFound = StorageErr("volume not found")
 
 var errDiskAccessDenied = StorageErr("drive access denied")

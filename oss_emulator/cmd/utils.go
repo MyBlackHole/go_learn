@@ -210,10 +210,25 @@ func unescapePath(p string) (string, error) {
 	return unescapeGeneric(p, url.PathUnescape)
 }
 
+// 判断字符串是不是以 suffix 结尾
 func HasSuffix(s string, suffix string) bool {
 	return strings.HasSuffix(s, suffix)
 }
 
 func UTCNow() time.Time {
 	return time.Now().UTC()
+}
+
+func baseDirFromPrefix(prefix string) string {
+	b := path.Dir(prefix)
+	if b == "." || b == "./" || b == "/" {
+		b = ""
+	}
+	if !strings.Contains(prefix, slashSeparator) {
+		b = ""
+	}
+	if len(b) > 0 && !strings.HasSuffix(b, slashSeparator) {
+		b += slashSeparator
+	}
+	return b
 }

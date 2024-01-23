@@ -2,6 +2,7 @@ package emulator
 
 import (
 	"context"
+	"github.com/nutsdb/nutsdb"
 	"io"
 )
 
@@ -9,26 +10,85 @@ type Objects struct {
 	disk StorageAPI
 }
 
-func (o *Objects) MakeBucket(ctx context.Context, bucket string) error {
-	disk := o.disk
+func (o *Objects) MakeBucket(ctx context.Context, bucket string) (err error) {
+	// disk := o.disk
 
-	disk.MakeVol(ctx, bucket)
+	var exist bool
 
+	err = globalMetaDb.View(func(tx *nutsdb.Tx) error {
+		exist = tx.ExistBucket(nutsdb.DataStructureBTree, bucket)
+		return nil
+	})
+
+	if err != nil {
+		return
+	}
+
+	if exist {
+		return errVolumeExists
+	}
+
+	err = globalMetaDb.Update(func(tx *nutsdb.Tx) error {
+		err = tx.NewBucket(nutsdb.DataStructureBTree, bucket)
+		return err
+	})
+
+	if err != nil {
+		return
+	}
+
+    // 预计方些桶信息 (不 put bucket 有问题)
+	err = globalMetaDb.Update(
+		func(tx *nutsdb.Tx) error {
+			key := []byte(bucket)
+			val := []byte(bucket)
+			return tx.Put(bucket, key, val, 0)
+		})
+
+	if err != nil {
+		return
+	}
+
+	// // 创建桶
+	// err := disk.MakeVol(ctx, bucket)
 	return nil
 }
 
 func (o *Objects) GetBucketInfo(ctx context.Context, bucket string) (bucketInfo BucketInfo, err error) {
-	disk := o.disk
+	// disk := o.disk
+	var exist bool
 
-	volInfo, err := disk.StatVol(ctx, bucket)
-	if err != nil {
+	err = globalMetaDb.View(func(tx *nutsdb.Tx) error {
+		exist = tx.ExistBucket(nutsdb.DataStructureBTree, bucket)
+		return nil
+	})
+
+	if !exist {
+		err = errVolumeNotFound
 		return
 	}
-	return BucketInfo{Name: bucket, Created: volInfo.Created}, nil
+
+	// volInfo, err := disk.StatVol(ctx, bucket)
+	// if err != nil {
+	// 	return
+	// }
+	return BucketInfo{Name: bucket}, nil
 }
 
 func (o *Objects) PutObject(ctx context.Context, bucket string, object string, size int64, r io.Reader) (objInfo ObjectInfo, err error) {
 	disk := o.disk
+
+	var exist bool
+
+	err = globalMetaDb.View(func(tx *nutsdb.Tx) error {
+		exist = tx.ExistBucket(nutsdb.DataStructureBTree, bucket)
+		return nil
+	})
+
+	if !exist {
+		err = errVolumeNotFound
+		return
+	}
 
 	fi := newFileInfo(pathJoin(bucket, object))
 
@@ -39,7 +99,9 @@ func (o *Objects) PutObject(ctx context.Context, bucket string, object string, s
 	}
 	fi.Size = size
 	fi.ModTime = UTCNow()
+
 	disk.WriteMetadata(ctx, bucket, object, fi)
+
 	objInfo = fi.ToObjectInfo(bucket, object)
 	return
 }
@@ -58,20 +120,37 @@ func (o *Objects) GetObjectInfo(ctx context.Context, bucket, object string) (inf
 }
 
 func (o *Objects) ListBuckets(ctx context.Context) (buckets []BucketInfo, err error) {
-	disk := o.disk
+	// disk := o.disk
 
 	buckets = make([]BucketInfo, 0, 32)
-	vols, err := disk.ListVols(ctx)
+	err = globalMetaDb.View(func(tx *nutsdb.Tx) error {
+		return tx.IterateBuckets(nutsdb.DataStructureBTree, "*", func(bucket string) bool {
+			bi := BucketInfo{
+				Name: bucket,
+				// Created: v.Created,
+			}
+			buckets = append(buckets, bi)
+			return true
+		})
+	})
 	if err != nil {
 		return
 	}
 
-	for _, v := range vols {
-		bi := BucketInfo{
-			Name:    v.Name,
-			Created: v.Created,
-		}
-		buckets = append(buckets, bi)
-	}
+	// vols, err := disk.ListVols(ctx)
+	// if err != nil {
+	// 	return
+	// }
+
 	return
+}
+
+func maxKeysPlusOne(maxKeys int, addOne bool) int {
+	if maxKeys < 0 || maxKeys > maxObjectList {
+		maxKeys = maxObjectList
+	}
+	if addOne {
+		maxKeys++
+	}
+	return maxKeys
 }

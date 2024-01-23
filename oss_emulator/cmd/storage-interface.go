@@ -13,4 +13,5 @@ type StorageAPI interface {
     WriteMetadata(ctx context.Context, volume, path string, fi FileInfo) error
     ReadMetadata(ctx context.Context, volume, path string) (FileInfo, error)
     ListVols(ctx context.Context) (volsInfo []VolInfo, err error)
+    WalkDir(ctx context.Context, opts WalkDirOptions) (fis []FileInfo, err error)
 }

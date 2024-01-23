@@ -43,6 +43,10 @@ const (
 	ErrInternalError
 	ErrServerNotInitialized
     ErrMissingContentLength
+	ErrInvalidMaxKeys
+    ErrInvalidObjectName
+    ErrInvalidEncodingMethod
+    ErrNotImplemented
 )
 
 var noError = APIError{}

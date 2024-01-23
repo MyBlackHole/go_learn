@@ -2,6 +2,8 @@ package emulator
 
 import (
 	"os"
+
+	"github.com/nutsdb/nutsdb"
 )
 
 type serverCtxt struct {
@@ -16,6 +18,8 @@ var (
 	globalOSSignalCh = make(chan os.Signal, 1)
 
 	globalLocalDrive StorageAPI
+
+	globalMetaDb *nutsdb.DB
 
 	globalOssDefaultOwnerID      = "0000000000000000000000000000000000000000000000000000000000000000"
 )

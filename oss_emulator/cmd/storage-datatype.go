@@ -1,8 +1,10 @@
 package emulator
 
 import (
-    "time"
+	"time"
 )
+
+const metacacheStreamVersion = 2
 
 type VolInfo struct {
 	Name string
@@ -24,4 +26,20 @@ type FileInfo struct {
 func newFileInfo(object string) (fi FileInfo) {
     fi.Volume = object
 	return
+}
+
+type WalkDirOptions struct {
+	Bucket string
+
+	BaseDir string
+
+	Recursive bool
+
+	ReportNotFound bool
+
+	FilterPrefix string
+
+	ForwardTo string
+
+	Limit int
 }

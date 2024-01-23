@@ -50,6 +50,10 @@ func readDir(dirPath string) (entries []string, err error) {
 	return readDirWithOpts(dirPath, readDirOpts{count: -1})
 }
 
+func readDirN(dirPath string, count int) (entries []string, err error) {
+	return readDirWithOpts(dirPath, readDirOpts{count: count})
+}
+
 func readDirWithOpts(dirPath string, opts readDirOpts) (entries []string, err error) {
 	fd, err := openFileWithFD(dirPath, readMode, 0o666)
 	if err != nil {

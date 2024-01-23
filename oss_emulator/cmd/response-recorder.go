@@ -57,7 +57,7 @@ func NewResponseRecorder(w http.ResponseWriter) *ResponseRecorder {
 }
 
 // ErrNotImplemented when a functionality is not implemented
-var ErrNotImplemented = errors.New("not implemented")
+var ErrNotImplementedOld = errors.New("not implemented")
 
 // ReadFrom implements support for calling internal io.ReaderFrom implementations
 // returns an error if the underlying ResponseWriter does not implement io.ReaderFrom
@@ -67,7 +67,7 @@ func (lrw *ResponseRecorder) ReadFrom(r io.Reader) (int64, error) {
 		lrw.bytesWritten += int(n)
 		return n, err
 	}
-	return 0, ErrNotImplemented
+	return 0, ErrNotImplementedOld
 }
 
 func (lrw *ResponseRecorder) Write(p []byte) (int, error) {

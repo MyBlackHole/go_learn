@@ -13,6 +13,7 @@ import (
 
 	"github.com/dustin/go-humanize"
 	"github.com/ncw/directio"
+	"github.com/nutsdb/nutsdb"
 )
 
 const (
@@ -221,7 +222,6 @@ func listVols(ctx context.Context, dirPath string) ([]VolInfo, error) {
 	return volsInfo, nil
 }
 
-
 func (s *Storage) CreateFile(ctx context.Context, volume, path string, fileSize int64, r io.Reader) (err error) {
 	volumeDir, err := s.getVolDir(volume)
 	if err != nil {
@@ -392,16 +392,21 @@ func (s *Storage) AppendFile(ctx context.Context, volume string, path string, bu
 	return nil
 }
 
-func (s *Storage) WriteMetadata(ctx context.Context, volume, path string, fi FileInfo) error {
+func (s *Storage) WriteMetadata(ctx context.Context, volume, path string, fi FileInfo) (err error) {
 	buf, err := fi.MarshalMsg(metaDataPoolGet())
 	defer metaDataPoolPut(buf)
 	if err != nil {
 		return err
 	}
 
-	return s.writeAll(ctx, volume, pathJoin(path, oStorageFormatFile), buf, false)
+	err = globalMetaDb.Update(
+		func(tx *nutsdb.Tx) error {
+			key := []byte(path)
+			val := buf
+			return tx.Put(volume, key, val, 0)
+		})
+	return
 }
-
 
 func (s *Storage) ReadAll(ctx context.Context, volume string, path string) (buf []byte, err error) {
 	volumeDir, err := s.getVolDir(volume)
@@ -418,7 +423,6 @@ func (s *Storage) ReadAll(ctx context.Context, volume string, path string) (buf 
 	return buf, err
 }
 
-
 func (s *Storage) readAllData(ctx context.Context, volume, volumeDir string, filePath string, discard bool) (buf []byte, dmTime time.Time, err error) {
 	if filePath == "" {
 		return nil, dmTime, errFileNotFound
@@ -432,9 +436,9 @@ func (s *Storage) readAllData(ctx context.Context, volume, volumeDir string, fil
 	if err != nil {
 		switch {
 		case osIsNotExist(err):
-            if err = Access(volumeDir); err != nil && osIsNotExist(err) {
-                return nil, dmTime, errVolumeNotFound
-            }
+			if err = Access(volumeDir); err != nil && osIsNotExist(err) {
+				return nil, dmTime, errVolumeNotFound
+			}
 			return nil, dmTime, errFileNotFound
 		case osIsPermission(err):
 			return nil, dmTime, errFileAccessDenied
@@ -485,6 +489,7 @@ func (s *Storage) readAllData(ctx context.Context, volume, volumeDir string, fil
 }
 
 func (s *Storage) ReadMetadata(ctx context.Context, volume, path string) (fi FileInfo, err error) {
+    var buf []byte
 	volumeDir, err := s.getVolDir(volume)
 	if err != nil {
 		return
@@ -495,11 +500,17 @@ func (s *Storage) ReadMetadata(ctx context.Context, volume, path string) (fi Fil
 		return
 	}
 
-	buf, _, err := s.readRaw(ctx, volume, volumeDir, filePath)
+	err = globalMetaDb.View(
+		func(tx *nutsdb.Tx) error {
+			key := []byte(path)
+            buf, err = tx.Get(volume, key)
+			return nil
+		})
+
 	if err != nil {
 		return
 	}
-    _, err = fi.UnmarshalMsg(buf)
+	_, err = fi.UnmarshalMsg(buf)
 	return
 }
 
@@ -509,10 +520,66 @@ func (s *Storage) readRaw(ctx context.Context, volume, volumeDir, filePath strin
 	}
 
 	path := pathJoin(filePath, oStorageFormatFile)
-    buf, dmTime, err = s.readAllData(ctx, volume, volumeDir, path, false)
+	buf, dmTime, err = s.readAllData(ctx, volume, volumeDir, path, false)
 	return buf, dmTime, nil
 }
 
 func isValidVolname(volname string) bool {
 	return len(volname) >= 3
+}
+
+func (s *Storage) WalkDir(ctx context.Context, opts WalkDirOptions) (fis []FileInfo, err error) {
+	volumeDir, err := s.getVolDir(opts.Bucket)
+	if err != nil {
+		return
+	}
+
+	if err = Access(volumeDir); err != nil {
+		if osIsNotExist(err) {
+			err = errVolumeNotFound
+			return
+		} else if isSysErrIO(err) {
+			err = errFaultyDisk
+			return
+		}
+		return
+	}
+	_, err = s.ListDir(ctx, opts.Bucket, opts.BaseDir, -1)
+	if err != nil {
+		if opts.ReportNotFound && err == errFileNotFound {
+			err = errFileNotFound
+		} else {
+			err = nil
+		}
+		return
+	}
+	return
+}
+
+func (s *Storage) ListDir(ctx context.Context, volume, dirPath string, count int) (entries []string, err error) {
+	volumeDir, err := s.getVolDir(volume)
+	if err != nil {
+		return nil, err
+	}
+
+	dirPathAbs := pathJoin(volumeDir, dirPath)
+	if count > 0 {
+		entries, err = readDirN(dirPathAbs, count)
+	} else {
+		entries, err = readDir(dirPathAbs)
+	}
+	if err != nil {
+		if err == errFileNotFound {
+			if ierr := Access(volumeDir); ierr != nil {
+				if osIsNotExist(ierr) {
+					return nil, errVolumeNotFound
+				} else if isSysErrIO(ierr) {
+					return nil, errFaultyDisk
+				}
+			}
+		}
+		return nil, err
+	}
+
+	return entries, nil
 }

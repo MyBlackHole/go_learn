@@ -70,3 +70,34 @@ func (api objectAPIHandlers) ListBucketsHandler(w http.ResponseWriter, r *http.R
 	encodedSuccessResponse := encodeResponse(response)
 	writeSuccessResponseXML(w, encodedSuccessResponse)
 }
+
+func (api objectAPIHandlers) ListObjectsHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := newContext(r, w, "ListObjects")
+
+	objectAPI := api.ObjectAPI()
+	if objectAPI == nil {
+		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(ErrServerNotInitialized), r.URL)
+	}
+
+	// vars := mux.Vars(r)
+	// bucket := vars["bucket"]
+
+	prefix, marker, delimiter, maxKeys, encodingType, s3Error := getListObjectsArgs(r.Form)
+	if s3Error != ErrNone {
+		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(s3Error), r.URL)
+		return
+	}
+
+	if s3Error := validateListObjectsArgs(prefix, marker, delimiter, encodingType, maxKeys); s3Error != ErrNone {
+		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(s3Error), r.URL)
+		return
+	}
+
+	// listObjects := objectAPI.ListObjects
+
+	// _, err := listObjects(ctx, bucket, prefix, marker, delimiter, maxKeys)
+	// if err != nil {
+	// 	writeErrorResponse(ctx, w, toAPIError(ctx, err), r.URL)
+	// 	return
+	// }
+}

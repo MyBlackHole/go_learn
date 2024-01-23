@@ -27,3 +27,42 @@ type ObjectInfo struct {
 
 	IsLatest bool
 }
+
+type ListObjectsInfo struct {
+    // 截断状态(超出单次返回最大数量)
+	IsTruncated bool
+
+	NextMarker string
+
+	Objects []ObjectInfo
+
+	Prefixes []string
+}
+
+type listPathOptions struct {
+	ID string
+
+	Bucket string
+
+	BaseDir string
+
+	Prefix string
+
+	FilterPrefix string
+
+	Marker string
+
+	Limit int
+
+	InclDeleted bool
+
+	Recursive bool
+
+	Separator string
+
+	Create bool
+
+	IncludeDirectories bool
+
+	Transient bool
+}
