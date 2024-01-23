@@ -33,6 +33,10 @@ func registerAPIRouter(router *mux.Router) {
 
     bucketRouter.Methods(http.MethodPut).Path("/{object:.+}").HandlerFunc(httpTraceHdrs(api.PutObjectHandler))
 
+    bucketRouter.Methods(http.MethodPost).Path("/{object:.+}").HandlerFunc(httpTraceHdrs(api.AppendObjectHandler)).Queries("append", "").Queries("position", "{position:.*}")
+
+    bucketRouter.Methods(http.MethodGet).HandlerFunc((httpTraceAll(api.ListObjectsHandler)))
+
 	bucketRouter.Methods(http.MethodHead).HandlerFunc(httpTraceAll(api.HeadBucketHandler))
 
 	bucketRouter.Methods(http.MethodPut).HandlerFunc(httpTraceAll(api.PutBucketHandler))

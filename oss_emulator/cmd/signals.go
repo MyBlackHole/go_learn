@@ -19,7 +19,7 @@ func handleSignals() {
 		case osSignal := <-globalOSSignalCh:
 			err := globalMetaDb.ActiveFile.Sync()
             globalMetaDb.Close()
-			fmt.Fprintf(os.Stdout, "signal: ", osSignal.String())
+			fmt.Fprintf(os.Stdout, "signal: %s", osSignal.String())
 			if err == nil {
 				exit(true)
 			}

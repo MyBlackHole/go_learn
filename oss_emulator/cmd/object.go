@@ -106,6 +106,40 @@ func (o *Objects) PutObject(ctx context.Context, bucket string, object string, s
 	return
 }
 
+func (o *Objects) AppendObject(ctx context.Context, bucket string, object string, size int64, r io.Reader) (objInfo ObjectInfo, err error) {
+	disk := o.disk
+
+	var exist bool
+
+	err = globalMetaDb.View(func(tx *nutsdb.Tx) error {
+		exist = tx.ExistBucket(nutsdb.DataStructureBTree, bucket)
+		return nil
+	})
+
+	if !exist {
+		err = errVolumeNotFound
+		return
+	}
+
+    fi, err := disk.ReadMetadata(ctx, bucket, object)
+    if err != nil {
+        fi = newFileInfo(pathJoin(bucket, object))
+    }
+
+	partName := "part.1"
+	err = disk.AppendFile(ctx, fi.Volume, partName, size, r)
+	if err != nil {
+		return
+	}
+	fi.Size += size
+	fi.ModTime = UTCNow()
+
+	disk.WriteMetadata(ctx, bucket, object, fi)
+
+	objInfo = fi.ToObjectInfo(bucket, object)
+	return
+}
+
 func (o *Objects) GetObjectInfo(ctx context.Context, bucket, object string) (info ObjectInfo, err error) {
 	disk := o.disk
 
@@ -153,4 +187,7 @@ func maxKeysPlusOne(maxKeys int, addOne bool) int {
 		maxKeys++
 	}
 	return maxKeys
+}
+func (o *Objects) ListObjects(ctx context.Context, bucket, prefix, marker, delimiter string, maxKeys int) (result ListObjectsInfo, err error) {
+    return 
 }

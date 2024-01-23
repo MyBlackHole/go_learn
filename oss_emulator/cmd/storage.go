@@ -362,7 +362,7 @@ func (s *Storage) openFile(filePath string, mode int) (f *os.File, err error) {
 	return w, nil
 }
 
-func (s *Storage) AppendFile(ctx context.Context, volume string, path string, buf []byte) (err error) {
+func (s *Storage) AppendFile(ctx context.Context, volume string, path string, appendFileSize int64, r io.Reader) (err error) {
 	volumeDir, err := s.getVolDir(volume)
 	if err != nil {
 		return err
@@ -380,13 +380,24 @@ func (s *Storage) AppendFile(ctx context.Context, volume string, path string, bu
 	}
 	defer w.Close()
 
-	n, err := w.Write(buf)
+	var bufp *[]byte
+    bufp = ODirectPoolLarge.Get().(*[]byte)
+    defer ODirectPoolLarge.Put(bufp)
+
+	var written int64
+	written, err = io.CopyBuffer(w, r, *bufp)
 	if err != nil {
 		return err
 	}
 
-	if n != len(buf) {
-		return io.ErrShortWrite
+	if written < appendFileSize && appendFileSize >= 0 {
+		return errLessData
+	} else if written > appendFileSize && appendFileSize >= 0 {
+		return errMoreData
+	}
+
+	if err = Fdatasync(w); err != nil {
+		return err
 	}
 
 	return nil

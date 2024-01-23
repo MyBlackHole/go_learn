@@ -45,6 +45,43 @@ func (api objectAPIHandlers) PutObjectHandler(w http.ResponseWriter, r *http.Req
 }
 
 
+func (api objectAPIHandlers) AppendObjectHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := newContext(r, w, "AppendObject")
+
+	objectAPI := api.ObjectAPI()
+	if objectAPI == nil {
+		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(ErrServerNotInitialized), r.URL)
+	}
+
+	vars := mux.Vars(r)
+	bucket := vars["bucket"]
+	object, err := unescapePath(vars["object"])
+	if err != nil {
+		writeErrorResponse(ctx, w, toAPIError(ctx, err), r.URL)
+		return
+	}
+	var (
+		rd        io.Reader = r.Body
+		appendObject           = objectAPI.AppendObject
+		size                = r.ContentLength
+	)
+
+	if size == -1 {
+		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(ErrMissingContentLength), r.URL)
+		return
+	}
+
+	objInfo, err := appendObject(ctx, bucket, object, size, rd)
+	if err != nil {
+		writeErrorResponse(ctx, w, toAPIError(ctx, err), r.URL)
+		return
+	}
+	setPutObjHeaders(w, objInfo, false)
+
+	writeSuccessResponseHeadersOnly(w)
+}
+
+
 func (api objectAPIHandlers) HeadObjectHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := newContext(r, w, "HeadObject")
 

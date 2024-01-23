@@ -79,8 +79,8 @@ func (api objectAPIHandlers) ListObjectsHandler(w http.ResponseWriter, r *http.R
 		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(ErrServerNotInitialized), r.URL)
 	}
 
-	// vars := mux.Vars(r)
-	// bucket := vars["bucket"]
+	vars := mux.Vars(r)
+	bucket := vars["bucket"]
 
 	prefix, marker, delimiter, maxKeys, encodingType, s3Error := getListObjectsArgs(r.Form)
 	if s3Error != ErrNone {
@@ -93,11 +93,11 @@ func (api objectAPIHandlers) ListObjectsHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	// listObjects := objectAPI.ListObjects
+	listObjects := objectAPI.ListObjects
 
-	// _, err := listObjects(ctx, bucket, prefix, marker, delimiter, maxKeys)
-	// if err != nil {
-	// 	writeErrorResponse(ctx, w, toAPIError(ctx, err), r.URL)
-	// 	return
-	// }
+	_, err := listObjects(ctx, bucket, prefix, marker, delimiter, maxKeys)
+	if err != nil {
+		writeErrorResponse(ctx, w, toAPIError(ctx, err), r.URL)
+		return
+	}
 }
