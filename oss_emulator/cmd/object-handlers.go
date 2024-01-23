@@ -3,7 +3,6 @@ package emulator
 import (
 	"io"
 	"net/http"
-	"strconv"
 
 	"github.com/minio/mux"
 )
@@ -114,21 +113,6 @@ func (api objectAPIHandlers) HeadObjectHandler(w http.ResponseWriter, r *http.Re
 	}
 
     w.WriteHeader(http.StatusOK)
-}
-
-func setObjectHeaders(w http.ResponseWriter, objInfo ObjectInfo) (err error) {
-	setCommonHeaders(w)
-
-	lastModified := objInfo.ModTime.UTC().Format(http.TimeFormat)
-	w.Header().Set(LastModified, lastModified)
-
-	if objInfo.ETag != "" {
-		w.Header()[ETag] = []string{"\"" + objInfo.ETag + "\""}
-	}
-
-    w.Header().Set(ContentLength, strconv.FormatInt(objInfo.Size, 10))
-
-	return nil
 }
 
 // 暂不提供支持

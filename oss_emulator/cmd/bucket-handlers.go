@@ -95,9 +95,12 @@ func (api objectAPIHandlers) ListObjectsHandler(w http.ResponseWriter, r *http.R
 
 	listObjects := objectAPI.ListObjects
 
-	_, err := listObjects(ctx, bucket, prefix, marker, delimiter, maxKeys)
+	listObjectsInfo, err := listObjects(ctx, bucket, prefix, marker, delimiter, maxKeys)
 	if err != nil {
 		writeErrorResponse(ctx, w, toAPIError(ctx, err), r.URL)
 		return
 	}
+	response := generateListObjectsResponse(bucket, prefix, marker, delimiter, encodingType, maxKeys, listObjectsInfo)
+
+	writeSuccessResponseXML(w, encodeResponseList(response))
 }

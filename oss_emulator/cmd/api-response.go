@@ -222,3 +222,79 @@ func hasBadPathComponent(path string) bool {
 func HasPrefix(s string, prefix string) bool {
 	return strings.HasPrefix(s, prefix)
 }
+
+func generateListObjectsResponse(bucket, prefix, marker, delimiter, encodingType string, maxKeys int, resp ListObjectsInfo) ListObjectsResponse {
+	contents := make([]Object, 0, len(resp.Objects))
+	owner := &Owner{
+		ID:          globalOssDefaultOwnerID,
+		DisplayName: "oss",
+	}
+	data := ListObjectsResponse{}
+
+	for _, object := range resp.Objects {
+		content := Object{}
+		if object.Name == "" {
+			continue
+		}
+		content.Key = s3EncodeName(object.Name, encodingType)
+		content.LastModified = ISO8601Format(object.ModTime.UTC())
+		if object.ETag != "" {
+			content.ETag = "\"" + object.ETag + "\""
+		}
+		content.Size = object.Size
+		content.Owner = owner
+		contents = append(contents, content)
+	}
+	data.Name = bucket
+	data.Contents = contents
+
+	data.EncodingType = encodingType
+	data.Prefix = s3EncodeName(prefix, encodingType)
+	data.Marker = s3EncodeName(marker, encodingType)
+	data.Delimiter = s3EncodeName(delimiter, encodingType)
+	data.MaxKeys = maxKeys
+	data.NextMarker = s3EncodeName(resp.NextMarker, encodingType)
+	data.IsTruncated = resp.IsTruncated
+
+	prefixes := make([]CommonPrefix, 0, len(resp.Prefixes))
+	for _, prefix := range resp.Prefixes {
+		prefixItem := CommonPrefix{}
+		prefixItem.Prefix = s3EncodeName(prefix, encodingType)
+		prefixes = append(prefixes, prefixItem)
+	}
+	data.CommonPrefixes = prefixes
+	return data
+}
+
+type ListObjectsResponse struct {
+	XMLName xml.Name `xml:"http://s3.amazonaws.com/doc/2006-03-01/ ListBucketResult" json:"-"`
+
+	Name   string
+	Prefix string
+	Marker string
+
+	NextMarker string `xml:"NextMarker,omitempty"`
+
+	MaxKeys   int
+	Delimiter string `xml:"Delimiter,omitempty"`
+	IsTruncated bool
+
+	Contents       []Object
+	CommonPrefixes []CommonPrefix
+
+	// Encoding type used to encode object keys in the response.
+	EncodingType string `xml:"EncodingType,omitempty"`
+}
+
+type Object struct {
+	Key          string
+	LastModified string
+	ETag         string
+	Size         int64
+
+	Owner *Owner `xml:"Owner,omitempty"`
+}
+
+type CommonPrefix struct {
+	Prefix string
+}

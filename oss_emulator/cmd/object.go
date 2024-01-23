@@ -1,6 +1,7 @@
 package emulator
 
 import (
+	"bytes"
 	"context"
 	"github.com/nutsdb/nutsdb"
 	"io"
@@ -37,7 +38,7 @@ func (o *Objects) MakeBucket(ctx context.Context, bucket string) (err error) {
 		return
 	}
 
-    // 预计方些桶信息 (不 put bucket 有问题)
+	// 预计方些桶信息 (不 put bucket 有问题)
 	err = globalMetaDb.Update(
 		func(tx *nutsdb.Tx) error {
 			key := []byte(bucket)
@@ -121,10 +122,10 @@ func (o *Objects) AppendObject(ctx context.Context, bucket string, object string
 		return
 	}
 
-    fi, err := disk.ReadMetadata(ctx, bucket, object)
-    if err != nil {
-        fi = newFileInfo(pathJoin(bucket, object))
-    }
+	fi, err := disk.ReadMetadata(ctx, bucket, object)
+	if err != nil {
+		fi = newFileInfo(pathJoin(bucket, object))
+	}
 
 	partName := "part.1"
 	err = disk.AppendFile(ctx, fi.Volume, partName, size, r)
@@ -188,6 +189,74 @@ func maxKeysPlusOne(maxKeys int, addOne bool) int {
 	}
 	return maxKeys
 }
+
 func (o *Objects) ListObjects(ctx context.Context, bucket, prefix, marker, delimiter string, maxKeys int) (result ListObjectsInfo, err error) {
-    return 
+	var exist bool
+
+    // 检查桶是否存在
+	err = globalMetaDb.View(func(tx *nutsdb.Tx) error {
+		exist = tx.ExistBucket(nutsdb.DataStructureBTree, bucket)
+		return nil
+	})
+
+	if !exist {
+		err = errVolumeNotFound
+		return
+	}
+
+	var markerFound bool
+	var existMarker bool
+	var existPrefix bool
+    var count int
+    
+    if len(prefix) > 0 {
+        existPrefix = true
+    }
+
+    if len(marker) > 0 {
+        existMarker = true
+    } else {
+        markerFound = true
+    }
+
+	var keys [][]byte
+	err = globalMetaDb.View(func(tx *nutsdb.Tx) error {
+		keys, err = tx.GetKeys(bucket)
+		return err
+	})
+
+	for _, key := range keys {
+        // 存在下一次开始位置
+		if existMarker && bytes.Compare([]byte(marker), key) <= 0 {
+            markerFound = true
+		}
+
+        if !markerFound {
+            // 未找到开始位置
+			continue
+        }
+
+        // 找到开始位置了
+        // 存在前缀检查
+        // 检查前缀是否匹配
+		if existPrefix && !bytes.HasPrefix(key, []byte(prefix)) {
+			continue
+		}
+
+        // 校验都通过了
+        count += 1
+		if count <= maxKeys {
+			result.Objects = append(result.Objects, ObjectInfo{
+				Bucket: bucket,
+				Name:   string(key),
+			})
+			continue
+		}
+        // 超出 maxKeys 范围
+        // 记录被截断了
+        result.IsTruncated = true
+        result.NextMarker = string(key)
+	}
+
+	return
 }

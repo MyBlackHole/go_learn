@@ -37,8 +37,9 @@ foo%
 
 
 # 静态编译
-go build -ldflags="-s -w"
+CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w"
 
 # debug
 sudo /home/black/go/bin/dlv exec ./emulator -- server --port 80
 ./ossutil -e 127.0.0.1 -i 1234 -k 1234 --loglevel=debug mb oss://wdg1
+./ossutil -e 192.168.63.183 -i 1234 -k 1234 mb oss://ob-1-1921686062-1705309643
