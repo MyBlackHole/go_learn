@@ -165,6 +165,9 @@ func getListObjectsArgs(values url.Values) (prefix, marker, delimiter string, ma
 
 	prefix = values.Get("prefix")
 	marker = values.Get("marker")
+    if marker == "/" {
+        marker = ""
+    }
 	delimiter = values.Get("delimiter")
 	encodingType = values.Get("encoding-type")
 	return

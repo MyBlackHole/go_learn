@@ -88,11 +88,10 @@ func (api objectAPIHandlers) ListObjectsHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-    // // 除去先
-	// if s3Error := validateListObjectsArgs(prefix, marker, delimiter, encodingType, maxKeys); s3Error != ErrNone {
-	// 	writeErrorResponse(ctx, w, errorCodes.ToAPIErr(s3Error), r.URL)
-	// 	return
-	// }
+	if s3Error := validateListObjectsArgs(prefix, marker, delimiter, encodingType, maxKeys); s3Error != ErrNone {
+		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(s3Error), r.URL)
+		return
+	}
 
 	listObjects := objectAPI.ListObjects
 

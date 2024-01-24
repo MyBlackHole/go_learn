@@ -524,6 +524,7 @@ func (s *Storage) ReadMetadata(ctx context.Context, volume, path string) (fi Fil
 	}
 
 	if len(buf) <= 0 {
+        err = errFileNotFound
 		return
 	}
 

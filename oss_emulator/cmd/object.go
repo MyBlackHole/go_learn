@@ -152,6 +152,7 @@ func (o *Objects) GetObjectInfo(ctx context.Context, bucket, object string) (inf
 
 	fi, err := disk.ReadMetadata(ctx, bucket, object)
 	if err != nil {
+		err = toObjectErr(err)
 		return
 	}
 
