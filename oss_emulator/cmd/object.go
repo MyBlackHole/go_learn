@@ -98,7 +98,7 @@ func (o *Objects) PutObject(ctx context.Context, bucket string, object string, s
 	fi := newFileInfo(pathJoin(bucket, object))
 
 	partName := "part.1"
-    written, err := disk.CreateFile(ctx, fi.Volume, partName, size, r)
+	written, err := disk.CreateFile(ctx, fi.Volume, partName, size, r)
 	if err != nil {
 		err = toObjectErr(err)
 		return
@@ -133,7 +133,7 @@ func (o *Objects) AppendObject(ctx context.Context, bucket string, object string
 	}
 
 	partName := "part.1"
-    written, err := disk.AppendFile(ctx, fi.Volume, partName, size, r)
+	written, err := disk.AppendFile(ctx, fi.Volume, partName, size, r)
 	if err != nil {
 		err = toObjectErr(err)
 		return
@@ -201,7 +201,7 @@ func maxKeysPlusOne(maxKeys int, addOne bool) int {
 func (o *Objects) ListObjects(ctx context.Context, bucket, prefix, marker, delimiter string, maxKeys int) (result ListObjectsInfo, err error) {
 	var exist bool
 
-    // 检查桶是否存在
+	// 检查桶是否存在
 	err = globalMetaDb.View(func(tx *nutsdb.Tx) error {
 		exist = tx.ExistBucket(nutsdb.DataStructureBTree, bucket)
 		return nil
@@ -215,17 +215,17 @@ func (o *Objects) ListObjects(ctx context.Context, bucket, prefix, marker, delim
 	var markerFound bool
 	var existMarker bool
 	var existPrefix bool
-    var count int
-    
-    if len(prefix) > 0 {
-        existPrefix = true
-    }
+	var count int
 
-    if len(marker) > 0 {
-        existMarker = true
-    } else {
-        markerFound = true
-    }
+	if len(prefix) > 0 {
+		existPrefix = true
+	}
+
+	if len(marker) > 0 {
+		existMarker = true
+	} else {
+		markerFound = true
+	}
 
 	var keys [][]byte
 	var values [][]byte
@@ -233,49 +233,86 @@ func (o *Objects) ListObjects(ctx context.Context, bucket, prefix, marker, delim
 		keys, values, err = tx.GetAll(bucket)
 		return err
 	})
-    if err != nil {
-        return
-    }
+	if err != nil {
+		return
+	}
 
 	for index, key := range keys {
-        // 存在下一次开始位置
+		// 存在下一次开始位置
 		if existMarker && bytes.Compare([]byte(marker), key) <= 0 {
-            markerFound = true
+			markerFound = true
 		}
 
-        if !markerFound {
-            // 未找到开始位置
+		if !markerFound {
+			// 未找到开始位置
 			continue
-        }
+		}
 
-        // 找到开始位置了
-        // 存在前缀检查
-        // 检查前缀是否匹配
+		// 找到开始位置了
+		// 存在前缀检查
+		// 检查前缀是否匹配
 		if existPrefix && !bytes.HasPrefix(key, []byte(prefix)) {
 			continue
 		}
 
-        // 跳过跟桶名一致对象
-        if bytes.Equal([]byte(bucket), key) {
+		// 跳过跟桶名一致对象
+		if bytes.Equal([]byte(bucket), key) {
 			continue
-        }
+		}
 
-        // 校验都通过了
-        count += 1
+		// 校验都通过了
+		count += 1
 		if count <= maxKeys {
-            var fi FileInfo
-            _, err = fi.UnmarshalMsg(values[index])
-            if err != nil {
-                return
-            }
+			var fi FileInfo
+			_, err = fi.UnmarshalMsg(values[index])
+			if err != nil {
+				return
+			}
 
 			result.Objects = append(result.Objects, fi.ToObjectInfo(bucket, string(key)))
 			continue
 		}
-        // 超出 maxKeys 范围
-        // 记录被截断了
-        result.IsTruncated = true
-        result.NextMarker = string(key)
+		// 超出 maxKeys 范围
+		// 记录被截断了
+		result.IsTruncated = true
+		result.NextMarker = string(key)
+	}
+
+	return
+}
+
+func (o *Objects) GetObject(ctx context.Context, bucket string, object string, w io.Writer, writeHeadCall func(objInfo ObjectInfo) error) (err error) {
+	disk := o.disk
+
+	var exist bool
+
+	err = globalMetaDb.View(func(tx *nutsdb.Tx) error {
+		exist = tx.ExistBucket(nutsdb.DataStructureBTree, bucket)
+		return nil
+	})
+
+	if !exist {
+		err = toObjectErr(errVolumeNotFound)
+		return
+	}
+
+	fi, err := disk.ReadMetadata(ctx, bucket, object)
+	if err != nil {
+		err = toObjectErr(err)
+		return
+	}
+
+    objInfo := fi.ToObjectInfo(bucket, object)
+    err = writeHeadCall(objInfo)
+	if err != nil {
+		return
+	}
+
+	partName := "part.1"
+	err = disk.ReadFile(ctx, fi.Volume, partName, w)
+	if err != nil {
+		err = toObjectErr(err)
+		return
 	}
 
 	return

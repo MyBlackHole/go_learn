@@ -594,3 +594,55 @@ func (s *Storage) ListDir(ctx context.Context, volume, dirPath string, count int
 
 	return entries, nil
 }
+
+func (s *Storage) ReadFile(ctx context.Context, volume, path string, w io.Writer) (err error) {
+	volumeDir, err := s.getVolDir(volume)
+	if err != nil {
+		return
+	}
+
+	filePath := pathJoin(volumeDir, path)
+
+	var r *os.File
+	r, err = OpenFile(filePath, readMode, 0o666)
+	if err != nil {
+		switch {
+		case osIsNotExist(err):
+			if err = Access(volumeDir); err != nil && osIsNotExist(err) {
+				return errVolumeNotFound
+			}
+			return errFileNotFound
+		case osIsPermission(err):
+			return errFileAccessDenied
+		case isSysErrNotDir(err) || isSysErrIsDir(err):
+			return errFileNotFound
+		case isSysErrHandleInvalid(err):
+			return errFileNotFound
+		case isSysErrIO(err):
+			return errFaultyDisk
+		case isSysErrTooManyFiles(err):
+			return errTooManyOpenFiles
+		case isSysErrInvalidArg(err):
+			st, _ := Lstat(filePath)
+			if st != nil && st.IsDir() {
+				return errFileNotFound
+			}
+			return errUnsupportedDisk
+		}
+		return err
+	}
+
+    defer r.Close()
+
+	var bufp *[]byte
+
+    bufp = ODirectPoolLarge.Get().(*[]byte)
+    defer ODirectPoolLarge.Put(bufp)
+
+	_, err = io.CopyBuffer(w, r, *bufp)
+	if err != nil {
+		return err
+	}
+
+    return
+}

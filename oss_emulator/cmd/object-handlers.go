@@ -28,7 +28,7 @@ func (api objectAPIHandlers) PutObjectHandler(w http.ResponseWriter, r *http.Req
 		size                = r.ContentLength
 	)
 
- //    // 存在等于 -1 的情况
+	//    // 存在等于 -1 的情况
 	// if size == -1 {
 	// 	writeErrorResponse(ctx, w, errorCodes.ToAPIErr(ErrMissingContentLength), r.URL)
 	// 	return
@@ -43,7 +43,6 @@ func (api objectAPIHandlers) PutObjectHandler(w http.ResponseWriter, r *http.Req
 
 	writeSuccessResponseHeadersOnly(w)
 }
-
 
 func (api objectAPIHandlers) AppendObjectHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := newContext(r, w, "AppendObject")
@@ -61,9 +60,9 @@ func (api objectAPIHandlers) AppendObjectHandler(w http.ResponseWriter, r *http.
 		return
 	}
 	var (
-		rd        io.Reader = r.Body
+		rd           io.Reader = r.Body
 		appendObject           = objectAPI.AppendObject
-		size                = r.ContentLength
+		size                   = r.ContentLength
 	)
 
 	// if size == -1 {
@@ -81,7 +80,6 @@ func (api objectAPIHandlers) AppendObjectHandler(w http.ResponseWriter, r *http.
 	writeSuccessResponseHeadersOnly(w)
 }
 
-
 func (api objectAPIHandlers) HeadObjectHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := newContext(r, w, "HeadObject")
 
@@ -93,7 +91,7 @@ func (api objectAPIHandlers) HeadObjectHandler(w http.ResponseWriter, r *http.Re
 
 	vars := mux.Vars(r)
 	bucket := vars["bucket"]
-    // 取变量对象
+	// 取变量对象
 	object, err := unescapePath(vars["object"])
 	if err != nil {
 		writeErrorResponse(ctx, w, toAPIError(ctx, err), r.URL)
@@ -104,7 +102,7 @@ func (api objectAPIHandlers) HeadObjectHandler(w http.ResponseWriter, r *http.Re
 
 	objInfo, err := getObjectInfo(ctx, bucket, object)
 	if err != nil {
-        writeErrorResponseHeadersOnly(w, toAPIError(ctx, err))
+		writeErrorResponseHeadersOnly(w, toAPIError(ctx, err))
 		return
 	}
 
@@ -113,11 +111,39 @@ func (api objectAPIHandlers) HeadObjectHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-    w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusOK)
 }
 
 // 暂不提供支持
 func (api objectAPIHandlers) NewMultipartUploadHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := newContext(r, w, "NewMultipartUpload")
-    writeErrorResponseHeadersOnly(w, toAPIError(ctx, nil))
+	writeErrorResponseHeadersOnly(w, toAPIError(ctx, nil))
+}
+
+func (api objectAPIHandlers) GetObjectHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := newContext(r, w, "GetObject")
+
+	objectAPI := api.ObjectAPI()
+	if objectAPI == nil {
+		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(ErrServerNotInitialized), r.URL)
+		return
+	}
+
+	vars := mux.Vars(r)
+	bucket := vars["bucket"]
+	object, err := unescapePath(vars["object"])
+	if err != nil {
+		writeErrorResponse(ctx, w, toAPIError(ctx, err), r.URL)
+		return
+	}
+
+	getObject := objectAPI.GetObject
+	err = getObject(ctx, bucket, object, w, func(objInfo ObjectInfo) (err error) {
+		err = setObjectHeaders(w, objInfo)
+		return
+	})
+	if err != nil {
+		writeErrorResponseHeadersOnly(w, toAPIError(ctx, err))
+		return
+	}
 }
