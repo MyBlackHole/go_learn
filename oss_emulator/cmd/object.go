@@ -22,19 +22,22 @@ func (o *Objects) MakeBucket(ctx context.Context, bucket string) (err error) {
 	})
 
 	if err != nil {
+		err = toObjectErr(err)
 		return
 	}
 
 	if exist {
-		return errVolumeExists
+		return toObjectErr(errVolumeExists)
 	}
 
 	err = globalMetaDb.Update(func(tx *nutsdb.Tx) error {
 		err = tx.NewBucket(nutsdb.DataStructureBTree, bucket)
+		err = toObjectErr(err)
 		return err
 	})
 
 	if err != nil {
+		err = toObjectErr(err)
 		return
 	}
 
@@ -47,6 +50,7 @@ func (o *Objects) MakeBucket(ctx context.Context, bucket string) (err error) {
 		})
 
 	if err != nil {
+		err = toObjectErr(err)
 		return
 	}
 
@@ -65,7 +69,7 @@ func (o *Objects) GetBucketInfo(ctx context.Context, bucket string) (bucketInfo 
 	})
 
 	if !exist {
-		err = errVolumeNotFound
+		err = toObjectErr(errVolumeNotFound)
 		return
 	}
 
@@ -87,18 +91,19 @@ func (o *Objects) PutObject(ctx context.Context, bucket string, object string, s
 	})
 
 	if !exist {
-		err = errVolumeNotFound
+		err = toObjectErr(errVolumeNotFound)
 		return
 	}
 
 	fi := newFileInfo(pathJoin(bucket, object))
 
 	partName := "part.1"
-	err = disk.CreateFile(ctx, fi.Volume, partName, size, r)
+    written, err := disk.CreateFile(ctx, fi.Volume, partName, size, r)
 	if err != nil {
+		err = toObjectErr(err)
 		return
 	}
-	fi.Size = size
+	fi.Size = written
 	fi.ModTime = UTCNow()
 
 	disk.WriteMetadata(ctx, bucket, object, fi)
@@ -118,7 +123,7 @@ func (o *Objects) AppendObject(ctx context.Context, bucket string, object string
 	})
 
 	if !exist {
-		err = errVolumeNotFound
+		err = toObjectErr(errVolumeNotFound)
 		return
 	}
 
@@ -128,11 +133,12 @@ func (o *Objects) AppendObject(ctx context.Context, bucket string, object string
 	}
 
 	partName := "part.1"
-	err = disk.AppendFile(ctx, fi.Volume, partName, size, r)
+    written, err := disk.AppendFile(ctx, fi.Volume, partName, size, r)
 	if err != nil {
+		err = toObjectErr(err)
 		return
 	}
-	fi.Size += size
+	fi.Size += written
 	fi.ModTime = UTCNow()
 
 	disk.WriteMetadata(ctx, bucket, object, fi)
@@ -169,6 +175,7 @@ func (o *Objects) ListBuckets(ctx context.Context) (buckets []BucketInfo, err er
 		})
 	})
 	if err != nil {
+		err = toObjectErr(err)
 		return
 	}
 
@@ -200,7 +207,7 @@ func (o *Objects) ListObjects(ctx context.Context, bucket, prefix, marker, delim
 	})
 
 	if !exist {
-		err = errVolumeNotFound
+		err = toObjectErr(errVolumeNotFound)
 		return
 	}
 

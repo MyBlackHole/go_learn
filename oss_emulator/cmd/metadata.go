@@ -6,9 +6,7 @@ import (
 
 const (
     // 1MB
-    SegmentSize = 1024*1024
-
-	oStorageFormatFile = "o.meta"
+    SegmentSize = 10 * 1024*1024
 )
 
 func InitMeta(metaDir string) {
@@ -16,7 +14,7 @@ func InitMeta(metaDir string) {
     globalMetaDb, err = nutsdb.Open(
 		nutsdb.DefaultOptions,
 		nutsdb.WithDir(metaDir),
-		nutsdb.WithSegmentSize(SegmentSize), 
+		// nutsdb.WithSegmentSize(SegmentSize), 
 	)
 	if err != nil {
 		panic(err)

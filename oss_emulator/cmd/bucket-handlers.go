@@ -81,17 +81,18 @@ func (api objectAPIHandlers) ListObjectsHandler(w http.ResponseWriter, r *http.R
 
 	vars := mux.Vars(r)
 	bucket := vars["bucket"]
-
-	prefix, marker, delimiter, maxKeys, encodingType, s3Error := getListObjectsArgs(r.Form)
+    query := r.URL.Query()
+	prefix, marker, delimiter, maxKeys, encodingType, s3Error := getListObjectsArgs(query)
 	if s3Error != ErrNone {
 		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(s3Error), r.URL)
 		return
 	}
 
-	if s3Error := validateListObjectsArgs(prefix, marker, delimiter, encodingType, maxKeys); s3Error != ErrNone {
-		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(s3Error), r.URL)
-		return
-	}
+    // // 除去先
+	// if s3Error := validateListObjectsArgs(prefix, marker, delimiter, encodingType, maxKeys); s3Error != ErrNone {
+	// 	writeErrorResponse(ctx, w, errorCodes.ToAPIErr(s3Error), r.URL)
+	// 	return
+	// }
 
 	listObjects := objectAPI.ListObjects
 

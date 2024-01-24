@@ -16,6 +16,10 @@ var errFileAccessDenied = StorageErr("file access denied")
 
 var errFileNotFound = StorageErr("file not found")
 
+var errFileVersionNotFound = StorageErr("file version not found")
+
+var errVolumeNotEmpty = StorageErr("volume is not empty")
+
 var errTooManyOpenFiles = StorageErr("too many open files, please increase 'ulimit -n'")
 
 var errFaultyDisk = StorageErr("drive is faulty")

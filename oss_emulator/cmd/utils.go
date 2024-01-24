@@ -1,6 +1,7 @@
 package emulator
 
 import (
+    "errors"
 	"context"
     "time"
 	"github.com/minio/mux"
@@ -306,4 +307,21 @@ func shouldEscape(c byte) bool {
 		return false
 	}
 	return true
+}
+
+func unwrapAll(err error) error {
+	for {
+		werr := errors.Unwrap(err)
+		if werr == nil {
+			return err
+		}
+		err = werr
+	}
+}
+
+func decodeDirObject(object string) string {
+	if HasSuffix(object, globalDirSuffix) {
+		return strings.TrimSuffix(object, globalDirSuffix) + slashSeparator
+	}
+	return object
 }

@@ -28,10 +28,11 @@ func (api objectAPIHandlers) PutObjectHandler(w http.ResponseWriter, r *http.Req
 		size                = r.ContentLength
 	)
 
-	if size == -1 {
-		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(ErrMissingContentLength), r.URL)
-		return
-	}
+ //    // 存在等于 -1 的情况
+	// if size == -1 {
+	// 	writeErrorResponse(ctx, w, errorCodes.ToAPIErr(ErrMissingContentLength), r.URL)
+	// 	return
+	// }
 
 	objInfo, err := putObject(ctx, bucket, object, size, rd)
 	if err != nil {
@@ -65,10 +66,10 @@ func (api objectAPIHandlers) AppendObjectHandler(w http.ResponseWriter, r *http.
 		size                = r.ContentLength
 	)
 
-	if size == -1 {
-		writeErrorResponse(ctx, w, errorCodes.ToAPIErr(ErrMissingContentLength), r.URL)
-		return
-	}
+	// if size == -1 {
+	// 	writeErrorResponse(ctx, w, errorCodes.ToAPIErr(ErrMissingContentLength), r.URL)
+	// 	return
+	// }
 
 	objInfo, err := appendObject(ctx, bucket, object, size, rd)
 	if err != nil {

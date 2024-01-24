@@ -1,7 +1,6 @@
 package emulator
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"io"
@@ -222,35 +221,37 @@ func listVols(ctx context.Context, dirPath string) ([]VolInfo, error) {
 	return volsInfo, nil
 }
 
-func (s *Storage) CreateFile(ctx context.Context, volume, path string, fileSize int64, r io.Reader) (err error) {
+func (s *Storage) CreateFile(ctx context.Context, volume, path string, fileSize int64, r io.Reader) (written int64, err error) {
 	volumeDir, err := s.getVolDir(volume)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	filePath := pathJoin(volumeDir, path)
 	if err = checkPathLength(filePath); err != nil {
-		return err
+		return 0, err
 	}
 
 	return s.writeAllDirect(ctx, filePath, fileSize, r, os.O_CREATE|os.O_WRONLY|os.O_EXCL)
 }
 
-func (s *Storage) writeAllDirect(ctx context.Context, filePath string, fileSize int64, r io.Reader, flags int) (err error) {
-	if contextCanceled(ctx) {
-		return ctx.Err()
-	}
+func (s *Storage) writeAllDirect(ctx context.Context, filePath string, fileSize int64, r io.Reader, flags int) (written int64, err error) {
+	// if contextCanceled(ctx) {
+	// 	return 0, ctx.Err()
+	// }
 
 	parentFilePath := pathutil.Dir(filePath)
 	if err = mkdirAll(parentFilePath, 0o777, s.Disk); err != nil {
-		return osErrToFileErr(err)
+		return 0, osErrToFileErr(err)
 	}
 
 	var w *os.File
 	w, err = OpenFile(filePath, flags, 0o666)
 	if err != nil {
-		return osErrToFileErr(err)
+		return 0, osErrToFileErr(err)
 	}
+
+    defer w.Close()
 
 	var bufp *[]byte
 	switch {
@@ -265,72 +266,70 @@ func (s *Storage) writeAllDirect(ctx context.Context, filePath string, fileSize 
 		defer ODirectPoolLarge.Put(bufp)
 	}
 
-	var written int64
 	written, err = io.CopyBuffer(w, r, *bufp)
 	if err != nil {
 		w.Close()
-		return err
+		return 0, err
 	}
 
-	if written < fileSize && fileSize >= 0 {
-		w.Close()
-		return errLessData
-	} else if written > fileSize && fileSize >= 0 {
-		w.Close()
-		return errMoreData
-	}
+	// if written < fileSize && fileSize >= 0 {
+	// 	w.Close()
+	// 	return errLessData
+	// } else if written > fileSize && fileSize >= 0 {
+	// 	w.Close()
+	// 	return errMoreData
+	// }
 
 	if err = Fdatasync(w); err != nil {
-		w.Close()
-		return err
+		return 0, err
 	}
-	return w.Close()
+	return
 }
 
-func (s *Storage) writeAll(ctx context.Context, volume string, path string, b []byte, sync bool) (err error) {
-	if contextCanceled(ctx) {
-		return ctx.Err()
-	}
+// func (s *Storage) writeAll(ctx context.Context, volume string, path string, b []byte, sync bool) (err error) {
+// 	if contextCanceled(ctx) {
+// 		return ctx.Err()
+// 	}
 
-	volumeDir, err := s.getVolDir(volume)
-	if err != nil {
-		return err
-	}
+// 	volumeDir, err := s.getVolDir(volume)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	filePath := pathJoin(volumeDir, path)
-	if err = checkPathLength(filePath); err != nil {
-		return err
-	}
+// 	filePath := pathJoin(volumeDir, path)
+// 	if err = checkPathLength(filePath); err != nil {
+// 		return err
+// 	}
 
-	flags := os.O_CREATE | os.O_WRONLY | os.O_TRUNC
+// 	flags := os.O_CREATE | os.O_WRONLY | os.O_TRUNC
 
-	var w *os.File
-	if sync {
-		if len(b) > DirectioAlignSize {
-			r := bytes.NewReader(b)
-			return s.writeAllDirect(ctx, filePath, r.Size(), r, flags)
-		}
-		w, err = s.openFileSync(filePath, flags)
-	} else {
-		w, err = s.openFile(filePath, flags)
-	}
-	if err != nil {
-		return err
-	}
+// 	var w *os.File
+// 	if sync {
+// 		if len(b) > DirectioAlignSize {
+// 			r := bytes.NewReader(b)
+// 			return s.writeAllDirect(ctx, filePath, r.Size(), r, flags)
+// 		}
+// 		w, err = s.openFileSync(filePath, flags)
+// 	} else {
+// 		w, err = s.openFile(filePath, flags)
+// 	}
+// 	if err != nil {
+// 		return err
+// 	}
 
-	n, err := w.Write(b)
-	if err != nil {
-		w.Close()
-		return err
-	}
+// 	n, err := w.Write(b)
+// 	if err != nil {
+// 		w.Close()
+// 		return err
+// 	}
 
-	if n != len(b) {
-		w.Close()
-		return io.ErrShortWrite
-	}
+// 	if n != len(b) {
+// 		w.Close()
+// 		return io.ErrShortWrite
+// 	}
 
-	return w.Close()
-}
+// 	return w.Close()
+// }
 
 func (s *Storage) openFileSync(filePath string, mode int) (f *os.File, err error) {
 	return s.openFile(filePath, mode|writeMode)
@@ -362,45 +361,44 @@ func (s *Storage) openFile(filePath string, mode int) (f *os.File, err error) {
 	return w, nil
 }
 
-func (s *Storage) AppendFile(ctx context.Context, volume string, path string, appendFileSize int64, r io.Reader) (err error) {
+func (s *Storage) AppendFile(ctx context.Context, volume string, path string, appendFileSize int64, r io.Reader) (written int64,  err error) {
 	volumeDir, err := s.getVolDir(volume)
 	if err != nil {
-		return err
+		return
 	}
 
 	filePath := pathJoin(volumeDir, path)
 	if err = checkPathLength(filePath); err != nil {
-		return err
+		return
 	}
 
 	var w *os.File
 	w, err = s.openFileSync(filePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY)
 	if err != nil {
-		return err
+		return
 	}
 	defer w.Close()
 
 	var bufp *[]byte
-    bufp = ODirectPoolLarge.Get().(*[]byte)
-    defer ODirectPoolLarge.Put(bufp)
+	bufp = ODirectPoolLarge.Get().(*[]byte)
+	defer ODirectPoolLarge.Put(bufp)
 
-	var written int64
 	written, err = io.CopyBuffer(w, r, *bufp)
 	if err != nil {
-		return err
+		return
 	}
 
-	if written < appendFileSize && appendFileSize >= 0 {
-		return errLessData
-	} else if written > appendFileSize && appendFileSize >= 0 {
-		return errMoreData
-	}
+	// if written < appendFileSize && appendFileSize >= 0 {
+	// 	return errLessData
+	// } else if written > appendFileSize && appendFileSize >= 0 {
+	// 	return errMoreData
+	// }
 
 	if err = Fdatasync(w); err != nil {
-		return err
+		return
 	}
 
-	return nil
+	return
 }
 
 func (s *Storage) WriteMetadata(ctx context.Context, volume, path string, fi FileInfo) (err error) {
@@ -495,12 +493,15 @@ func (s *Storage) readAllData(ctx context.Context, volume, volumeDir string, fil
 	}
 
 	_, err = io.ReadFull(f, buf)
+	if err != nil {
+		return
+	}
 
 	return buf, stat.ModTime().UTC(), osErrToFileErr(err)
 }
 
 func (s *Storage) ReadMetadata(ctx context.Context, volume, path string) (fi FileInfo, err error) {
-    var buf []byte
+	var buf []byte
 	volumeDir, err := s.getVolDir(volume)
 	if err != nil {
 		return
@@ -514,25 +515,23 @@ func (s *Storage) ReadMetadata(ctx context.Context, volume, path string) (fi Fil
 	err = globalMetaDb.View(
 		func(tx *nutsdb.Tx) error {
 			key := []byte(path)
-            buf, err = tx.Get(volume, key)
+			buf, err = tx.Get(volume, key)
 			return nil
 		})
 
 	if err != nil {
 		return
 	}
-	_, err = fi.UnmarshalMsg(buf)
-	return
-}
 
-func (s *Storage) readRaw(ctx context.Context, volume, volumeDir, filePath string) (buf []byte, dmTime time.Time, err error) {
-	if filePath == "" {
-		return nil, dmTime, errFileNotFound
+	if len(buf) <= 0 {
+		return
 	}
 
-	path := pathJoin(filePath, oStorageFormatFile)
-	buf, dmTime, err = s.readAllData(ctx, volume, volumeDir, path, false)
-	return buf, dmTime, nil
+	_, err = fi.UnmarshalMsg(buf)
+	if err != nil {
+		return
+	}
+	return
 }
 
 func isValidVolname(volname string) bool {
