@@ -1,6 +1,8 @@
 package emulator
 
 import (
+	"fmt"
+	"net/http/httputil"
 	"net/http"
 	"reflect"
 	"runtime"
@@ -40,6 +42,12 @@ func getOpName(name string) (op string) {
 // http 跟踪
 func httpTrace(f http.HandlerFunc, logBody bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+        requestDump, err := httputil.DumpRequest(r, true)
+        if err != nil {
+          fmt.Println(err)
+        }
+        fmt.Println(string(requestDump))
+
 		tc, ok := r.Context().Value(ContextTraceKey).(*TraceCtxt)
 		if !ok {
 			// Tracing is not enabled for this request

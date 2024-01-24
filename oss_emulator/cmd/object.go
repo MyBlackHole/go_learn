@@ -30,11 +30,12 @@ func (o *Objects) MakeBucket(ctx context.Context, bucket string) (err error) {
 		return toObjectErr(errVolumeExists)
 	}
 
-	err = globalMetaDb.Update(func(tx *nutsdb.Tx) error {
-		err = tx.NewBucket(nutsdb.DataStructureBTree, bucket)
-		err = toObjectErr(err)
-		return err
-	})
+	err = globalMetaDb.Update(
+		func(tx *nutsdb.Tx) error {
+			err = tx.NewBucket(nutsdb.DataStructureBTree, bucket)
+			return err
+		},
+	)
 
 	if err != nil {
 		err = toObjectErr(err)
@@ -47,7 +48,8 @@ func (o *Objects) MakeBucket(ctx context.Context, bucket string) (err error) {
 			key := []byte(bucket)
 			val := []byte(bucket)
 			return tx.Put(bucket, key, val, 0)
-		})
+		},
+	)
 
 	if err != nil {
 		err = toObjectErr(err)
@@ -302,8 +304,8 @@ func (o *Objects) GetObject(ctx context.Context, bucket string, object string, w
 		return
 	}
 
-    objInfo := fi.ToObjectInfo(bucket, object)
-    err = writeHeadCall(objInfo)
+	objInfo := fi.ToObjectInfo(bucket, object)
+	err = writeHeadCall(objInfo)
 	if err != nil {
 		return
 	}

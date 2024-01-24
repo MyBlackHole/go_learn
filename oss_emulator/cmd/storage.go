@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"log"
 	"os"
 	pathutil "path"
 	"path/filepath"
@@ -251,7 +252,7 @@ func (s *Storage) writeAllDirect(ctx context.Context, filePath string, fileSize 
 		return 0, osErrToFileErr(err)
 	}
 
-    defer w.Close()
+	defer w.Close()
 
 	var bufp *[]byte
 	switch {
@@ -361,7 +362,7 @@ func (s *Storage) openFile(filePath string, mode int) (f *os.File, err error) {
 	return w, nil
 }
 
-func (s *Storage) AppendFile(ctx context.Context, volume string, path string, appendFileSize int64, r io.Reader) (written int64,  err error) {
+func (s *Storage) AppendFile(ctx context.Context, volume string, path string, appendFileSize int64, r io.Reader) (written int64, err error) {
 	volumeDir, err := s.getVolDir(volume)
 	if err != nil {
 		return
@@ -407,13 +408,17 @@ func (s *Storage) WriteMetadata(ctx context.Context, volume, path string, fi Fil
 	if err != nil {
 		return err
 	}
+    log.Println("****************************")
+    log.Printf("volume: %+v, path: %+v, fi: %+v", volume, path, fi)
+    log.Println("****************************")
 
 	err = globalMetaDb.Update(
 		func(tx *nutsdb.Tx) error {
 			key := []byte(path)
 			val := buf
 			return tx.Put(volume, key, val, 0)
-		})
+		},
+	)
 	return
 }
 
@@ -517,14 +522,15 @@ func (s *Storage) ReadMetadata(ctx context.Context, volume, path string) (fi Fil
 			key := []byte(path)
 			buf, err = tx.Get(volume, key)
 			return nil
-		})
+		},
+	)
 
 	if err != nil {
 		return
 	}
 
 	if len(buf) <= 0 {
-        err = errFileNotFound
+		err = errFileNotFound
 		return
 	}
 
@@ -632,17 +638,17 @@ func (s *Storage) ReadFile(ctx context.Context, volume, path string, w io.Writer
 		return err
 	}
 
-    defer r.Close()
+	defer r.Close()
 
 	var bufp *[]byte
 
-    bufp = ODirectPoolLarge.Get().(*[]byte)
-    defer ODirectPoolLarge.Put(bufp)
+	bufp = ODirectPoolLarge.Get().(*[]byte)
+	defer ODirectPoolLarge.Put(bufp)
 
 	_, err = io.CopyBuffer(w, r, *bufp)
 	if err != nil {
 		return err
 	}
 
-    return
+	return
 }
