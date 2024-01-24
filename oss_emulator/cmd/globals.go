@@ -21,7 +21,7 @@ var (
 
 	globalMetaDb *nutsdb.DB
 
-	globalOssDefaultOwnerID = "0000000000000000000000000000000000000000000000000000000000000000"
+	globalOssDefaultOwnerID = "00220240124"
 
 	globalDirSuffix = "__XLDIR__"
 )

@@ -36,7 +36,7 @@ const (
 	AmzMetaUnencryptedContentLength              = "X-Amz-Meta-X-Amz-Unencrypted-Content-Length"
 	AmzMetaUnencryptedContentMD5                 = "X-Amz-Meta-X-Amz-Unencrypted-Content-Md5"
 
-	maxObjectList  = 1000
+	maxObjectList = 1000
 
 	dotdotComponent = ".."
 	dotComponent    = "."
@@ -165,14 +165,13 @@ func getListObjectsArgs(values url.Values) (prefix, marker, delimiter string, ma
 
 	prefix = values.Get("prefix")
 	marker = values.Get("marker")
-    if marker == "/" {
-        marker = ""
-    }
+	if marker == "/" {
+		marker = ""
+	}
 	delimiter = values.Get("delimiter")
 	encodingType = values.Get("encoding-type")
 	return
 }
-
 
 func validateListObjectsArgs(prefix, marker, delimiter, encodingType string, maxKeys int) APIErrorCode {
 	if maxKeys < 0 {
@@ -242,9 +241,11 @@ func generateListObjectsResponse(bucket, prefix, marker, delimiter, encodingType
 		content.Key = s3EncodeName(object.Name, encodingType)
 		content.LastModified = ISO8601Format(object.ModTime.UTC())
 		if object.ETag != "" {
-			content.ETag = "\"" + object.ETag + "\""
+			content.ETag = object.ETag
 		}
 		content.Size = object.Size
+		content.StorageClass = object.StorageClass
+		content.Type = object.Type
 		content.Owner = owner
 		contents = append(contents, content)
 	}
@@ -278,8 +279,8 @@ type ListObjectsResponse struct {
 
 	NextMarker string `xml:"NextMarker,omitempty"`
 
-	MaxKeys   int
-	Delimiter string `xml:"Delimiter,omitempty"`
+	MaxKeys     int
+	Delimiter   string `xml:"Delimiter,omitempty"`
 	IsTruncated bool
 
 	Contents       []Object
@@ -294,6 +295,8 @@ type Object struct {
 	LastModified string
 	ETag         string
 	Size         int64
+	StorageClass string
+	Type         string
 
 	Owner *Owner `xml:"Owner,omitempty"`
 }

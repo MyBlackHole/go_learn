@@ -269,12 +269,7 @@ func (o *Objects) ListObjects(ctx context.Context, bucket, prefix, marker, delim
                 return
             }
 
-			result.Objects = append(result.Objects, ObjectInfo{
-				Bucket: bucket,
-				Name:   string(key),
-                ModTime: fi.ModTime,
-                Size: fi.Size,
-			})
+			result.Objects = append(result.Objects, fi.ToObjectInfo(bucket, string(key)))
 			continue
 		}
         // 超出 maxKeys 范围

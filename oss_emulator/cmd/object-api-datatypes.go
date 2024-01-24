@@ -15,6 +15,10 @@ type BucketInfo struct {
 type ObjectInfo struct {
 	Bucket string
 
+    StorageClass string
+
+    Type string
+
 	Name string
 
 	ModTime time.Time
