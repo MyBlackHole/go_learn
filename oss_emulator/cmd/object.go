@@ -228,12 +228,16 @@ func (o *Objects) ListObjects(ctx context.Context, bucket, prefix, marker, delim
     }
 
 	var keys [][]byte
+	var values [][]byte
 	err = globalMetaDb.View(func(tx *nutsdb.Tx) error {
-		keys, err = tx.GetKeys(bucket)
+		keys, values, err = tx.GetAll(bucket)
 		return err
 	})
+    if err != nil {
+        return
+    }
 
-	for _, key := range keys {
+	for index, key := range keys {
         // 存在下一次开始位置
 		if existMarker && bytes.Compare([]byte(marker), key) <= 0 {
             markerFound = true
@@ -251,12 +255,25 @@ func (o *Objects) ListObjects(ctx context.Context, bucket, prefix, marker, delim
 			continue
 		}
 
+        // 跳过跟桶名一致对象
+        if bytes.Equal([]byte(bucket), key) {
+			continue
+        }
+
         // 校验都通过了
         count += 1
 		if count <= maxKeys {
+            var fi FileInfo
+            _, err = fi.UnmarshalMsg(values[index])
+            if err != nil {
+                return
+            }
+
 			result.Objects = append(result.Objects, ObjectInfo{
 				Bucket: bucket,
 				Name:   string(key),
+                ModTime: fi.ModTime,
+                Size: fi.Size,
 			})
 			continue
 		}
