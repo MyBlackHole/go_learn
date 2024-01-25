@@ -1,6 +1,7 @@
 package emulator
 
 import (
+	"errors"
 	"io"
 	"net/http"
 
@@ -23,22 +24,19 @@ func (api objectAPIHandlers) PutObjectHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 	var (
-		rd        io.Reader = r.Body
-		putObject           = objectAPI.PutObject
-		size                = r.ContentLength
+		objInfo          ObjectInfo
+		rd               io.Reader = r.Body
+		putObject                  = objectAPI.PutObject
+		size                       = r.ContentLength
+		// transferEncoding           = r.TransferEncoding
 	)
 
-	//    // 存在等于 -1 的情况
-	// if size == -1 {
-	// 	writeErrorResponse(ctx, w, errorCodes.ToAPIErr(ErrMissingContentLength), r.URL)
-	// 	return
-	// }
+    objInfo, err = putObject(ctx, bucket, object, size, rd)
+    if err != nil {
+        writeErrorResponse(ctx, w, toAPIError(ctx, err), r.URL)
+        return
+    }
 
-	objInfo, err := putObject(ctx, bucket, object, size, rd)
-	if err != nil {
-		writeErrorResponse(ctx, w, toAPIError(ctx, err), r.URL)
-		return
-	}
 	setPutObjHeaders(w, objInfo, false)
 
 	writeSuccessResponseHeadersOnly(w)
@@ -137,8 +135,19 @@ func (api objectAPIHandlers) GetObjectHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	var rs *HTTPRangeSpec
+	var rangeErr error
+	rangeHeader := r.Header.Get(Range)
+	if rangeHeader != "" {
+		rs, rangeErr = parseRequestRangeSpec(rangeHeader)
+		if errors.Is(rangeErr, errInvalidRange) {
+			writeErrorResponse(ctx, w, errorCodes.ToAPIErr(ErrInvalidRange), r.URL)
+			return
+		}
+	}
+
 	getObject := objectAPI.GetObject
-	err = getObject(ctx, bucket, object, w, func(objInfo ObjectInfo) (err error) {
+	err = getObject(ctx, bucket, object, w, rs, func(objInfo ObjectInfo) (err error) {
 		err = setObjectHeaders(w, objInfo)
 		return
 	})

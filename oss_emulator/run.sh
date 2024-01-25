@@ -38,6 +38,8 @@ foo%
 
 # 静态编译
 CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w"
+# 提供更全的 debug 信息
+go build -gcflags="all=-N -l"
 
 # debug
 sudo /home/black/go/bin/dlv exec ./emulator -- server --port 80
@@ -50,3 +52,8 @@ break HeadObjectHandler
 break AppendObjectHandler
 break PutObjectHandler
 break errorResponseHandler
+
+byebug /opt/aio/airflow/tools/oss-emulator/bin/emulator -r /volmountpoint/aiopool/aio_s3 -p 80
+break /opt/aio/airflow/tools/oss-emulator/lib/emulator/object.rb:20
+
+cd /opt/aio/airflow/tools/oss-emulator/bin/ &&  ruby ./emulator -r /volmountpoint/aiopool/aio_s3 -p 80 -L debug &

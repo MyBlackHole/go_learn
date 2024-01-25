@@ -42,7 +42,7 @@ func getOpName(name string) (op string) {
 // http 跟踪
 func httpTrace(f http.HandlerFunc, logBody bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-        requestDump, err := httputil.DumpRequest(r, true)
+        requestDump, err := httputil.DumpRequest(r, false)
         if err != nil {
           fmt.Println(err)
         }

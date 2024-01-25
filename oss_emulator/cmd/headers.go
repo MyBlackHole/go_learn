@@ -7,9 +7,10 @@ import (
 )
 
 const (
+	Range            = "Range"
 	AmzRequestID     = "x-amz-request-id"
 	AmzRequestHostID = "x-amz-id-2"
-	Header = `<?xml version="1.0" encoding="UTF-8"?>` + "\n"
+	Header           = `<?xml version="1.0" encoding="UTF-8"?>` + "\n"
 )
 
 func getHostName(r *http.Request) (hostName string) {

@@ -97,3 +97,45 @@ func OpenFile(name string, flag int, perm os.FileMode) (f *os.File, err error) {
 func Fdatasync(f *os.File) error {
 	return syscall.Fdatasync(int(f.Fd()))
 }
+
+func Remove(deletePath string) (err error) {
+	return os.Remove(deletePath)
+}
+
+func removeAll(dirPath string) (err error) {
+	if dirPath == "" {
+		return errInvalidArgument
+	}
+
+	if err = checkPathLength(dirPath); err != nil {
+		return err
+	}
+
+	if err = reliableRemoveAll(dirPath); err != nil {
+		switch {
+		case isSysErrNotDir(err):
+			return errFileAccessDenied
+		case isSysErrPathNotFound(err):
+			return errFileAccessDenied
+		}
+	}
+	return err
+}
+
+func reliableRemoveAll(dirPath string) (err error) {
+	i := 0
+	for {
+		if err = RemoveAll(dirPath); err != nil {
+			if isSysErrNotEmpty(err) && i == 0 {
+				i++
+				continue
+			}
+		}
+		break
+	}
+	return err
+}
+
+func RemoveAll(dirPath string) (err error) {
+	return os.RemoveAll(dirPath)
+}

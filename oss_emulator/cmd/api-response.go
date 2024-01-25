@@ -54,7 +54,7 @@ func setCommonHeaders(w http.ResponseWriter) {
 
 	w.Header().Set(AcceptRanges, "bytes")
 
-	RemoveSensitiveHeaders(w.Header())
+	// RemoveSensitiveHeaders(w.Header())
 }
 
 func writeResponse(w http.ResponseWriter, statusCode int, response []byte, mType mimeType) {

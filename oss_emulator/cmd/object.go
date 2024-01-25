@@ -96,10 +96,25 @@ func (o *Objects) PutObject(ctx context.Context, bucket string, object string, s
 		err = toObjectErr(errVolumeNotFound)
 		return
 	}
-
-	fi := newFileInfo(pathJoin(bucket, object))
-
 	partName := "part.1"
+
+	fi, err := disk.ReadMetadata(ctx, bucket, object)
+    if err == nil {
+        // 重复 put 同一对象删除旧的
+        err = disk.DeleteFile(ctx, fi.Volume, partName, fi)
+        if err != nil {
+            err = toObjectErr(err)
+            return
+        }
+
+        err = globalMetaDb.Update(func(tx *nutsdb.Tx) error {
+            err = tx.Delete(bucket, []byte(object))
+            return err
+        })
+    }
+
+	fi = newFileInfo(pathJoin(bucket, object))
+
 	written, err := disk.CreateFile(ctx, fi.Volume, partName, size, r)
 	if err != nil {
 		err = toObjectErr(err)
@@ -283,7 +298,7 @@ func (o *Objects) ListObjects(ctx context.Context, bucket, prefix, marker, delim
 	return
 }
 
-func (o *Objects) GetObject(ctx context.Context, bucket string, object string, w io.Writer, writeHeadCall func(objInfo ObjectInfo) error) (err error) {
+func (o *Objects) GetObject(ctx context.Context, bucket string, object string, w io.Writer, rs *HTTPRangeSpec, writeHeadCall func(objInfo ObjectInfo) error) (err error) {
 	disk := o.disk
 
 	var exist bool
@@ -311,11 +326,25 @@ func (o *Objects) GetObject(ctx context.Context, bucket string, object string, w
 	}
 
 	partName := "part.1"
-	err = disk.ReadFile(ctx, fi.Volume, partName, w)
-	if err != nil {
-		err = toObjectErr(err)
-		return
-	}
+    if rs != nil {
+        rangeLength, err := rs.GetLength(objInfo.Size)
+        if err != nil {
+            err = toObjectErr(err)
+            return err
+        }
+        newBuf := make([]byte, rangeLength)
+        _, err = disk.ReadFile(ctx, fi.Volume, partName, rs.Start, newBuf, w)
+        if err != nil {
+            err = toObjectErr(err)
+            return err
+        }
+    } else {
+        _, err = disk.ReadFile(ctx, fi.Volume, partName, 0, nil, w)
+        if err != nil {
+            err = toObjectErr(err)
+            return
+        }
+    }
 
 	return
 }

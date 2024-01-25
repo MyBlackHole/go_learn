@@ -29,7 +29,7 @@ func setObjectHeaders(w http.ResponseWriter, objInfo ObjectInfo) (err error) {
 		w.Header()[ETag] = []string{"\"" + objInfo.ETag + "\""}
 	}
 
-    w.Header().Set(ContentLength, strconv.FormatInt(objInfo.Size, 10))
+    // w.Header().Set(ContentLength, strconv.FormatInt(objInfo.Size, 10))
 	w.Header().Set(NextAppendPosition, strconv.FormatInt(objInfo.Size, 10))
 
 	return nil

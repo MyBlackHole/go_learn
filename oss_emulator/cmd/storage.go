@@ -8,6 +8,7 @@ import (
 	"os"
 	pathutil "path"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -403,14 +404,15 @@ func (s *Storage) AppendFile(ctx context.Context, volume string, path string, ap
 }
 
 func (s *Storage) WriteMetadata(ctx context.Context, volume, path string, fi FileInfo) (err error) {
-	buf, err := fi.MarshalMsg(metaDataPoolGet())
+	// buf, err := fi.MarshalMsg(metaDataPoolGet())
+	buf, err := fi.MarshalMsg(nil)
 	defer metaDataPoolPut(buf)
 	if err != nil {
 		return err
 	}
-    log.Println("****************************")
-    log.Printf("volume: %+v, path: %+v, fi: %+v", volume, path, fi)
-    log.Println("****************************")
+	log.Println("****************************")
+	log.Printf("volume: %+v, path: %+v, fi: %+v", volume, path, fi)
+	log.Println("****************************")
 
 	err = globalMetaDb.Update(
 		func(tx *nutsdb.Tx) error {
@@ -601,10 +603,10 @@ func (s *Storage) ListDir(ctx context.Context, volume, dirPath string, count int
 	return entries, nil
 }
 
-func (s *Storage) ReadFile(ctx context.Context, volume, path string, w io.Writer) (err error) {
+func (s *Storage) ReadFile(ctx context.Context, volume, path string, offset int64, buffer []byte, w io.Writer) (int64, error) {
 	volumeDir, err := s.getVolDir(volume)
 	if err != nil {
-		return
+		return 0, err
 	}
 
 	filePath := pathJoin(volumeDir, path)
@@ -615,27 +617,27 @@ func (s *Storage) ReadFile(ctx context.Context, volume, path string, w io.Writer
 		switch {
 		case osIsNotExist(err):
 			if err = Access(volumeDir); err != nil && osIsNotExist(err) {
-				return errVolumeNotFound
+				return 0, errVolumeNotFound
 			}
-			return errFileNotFound
+			return 0, errFileNotFound
 		case osIsPermission(err):
-			return errFileAccessDenied
+			return 0, errFileAccessDenied
 		case isSysErrNotDir(err) || isSysErrIsDir(err):
-			return errFileNotFound
+			return 0, errFileNotFound
 		case isSysErrHandleInvalid(err):
-			return errFileNotFound
+			return 0, errFileNotFound
 		case isSysErrIO(err):
-			return errFaultyDisk
+			return 0, errFaultyDisk
 		case isSysErrTooManyFiles(err):
-			return errTooManyOpenFiles
+			return 0, errTooManyOpenFiles
 		case isSysErrInvalidArg(err):
 			st, _ := Lstat(filePath)
 			if st != nil && st.IsDir() {
-				return errFileNotFound
+				return 0, errFileNotFound
 			}
-			return errUnsupportedDisk
+			return 0, errUnsupportedDisk
 		}
-		return err
+		return 0, err
 	}
 
 	defer r.Close()
@@ -645,10 +647,81 @@ func (s *Storage) ReadFile(ctx context.Context, volume, path string, w io.Writer
 	bufp = ODirectPoolLarge.Get().(*[]byte)
 	defer ODirectPoolLarge.Put(bufp)
 
-	_, err = io.CopyBuffer(w, r, *bufp)
+	if buffer != nil {
+        n, err := r.ReadAt(buffer, offset)
+		if err != nil {
+			return 0, err
+		}
+		_, err = w.Write(buffer)
+		if err != nil {
+			return 0, err
+		}
+		return int64(n), err
+	}
+
+    n, err := io.CopyBuffer(w, r, *bufp)
+	if err != nil {
+		return 0, err
+	}
+
+	return n, nil
+}
+
+func (s *Storage) DeleteFile(ctx context.Context, volume, path string, fi FileInfo) (err error) {
+	volumeDir, err := s.getVolDir(volume)
 	if err != nil {
 		return err
 	}
 
-	return
+	filePath := pathJoin(volumeDir, path)
+	if err = checkPathLength(filePath); err != nil {
+		return err
+	}
+
+    err = s.deleteFile(volumeDir, filePath, false)
+    return
+}
+
+func (s *Storage) deleteFile(basePath, deletePath string, recursive bool) error {
+	if basePath == "" || deletePath == "" {
+		return nil
+	}
+	isObjectDir := HasSuffix(deletePath, SlashSeparator)
+	basePath = pathutil.Clean(basePath)
+	deletePath = pathutil.Clean(deletePath)
+	if !strings.HasPrefix(deletePath, basePath) || deletePath == basePath {
+		return nil
+	}
+
+	var err error
+	if recursive {
+        err = removeAll(deletePath)
+	} else {
+		err = Remove(deletePath)
+	}
+	if err != nil {
+		switch {
+		case isSysErrNotEmpty(err):
+			if isObjectDir {
+				return errFileNotFound
+			}
+			return nil
+		case osIsNotExist(err):
+			return nil
+		case errors.Is(err, errFileNotFound):
+			return nil
+		case osIsPermission(err):
+			return errFileAccessDenied
+		case isSysErrIO(err):
+			return errFaultyDisk
+		default:
+			return err
+		}
+	}
+
+	deletePath = pathutil.Dir(deletePath)
+
+	s.deleteFile(basePath, deletePath, false)
+
+	return nil
 }

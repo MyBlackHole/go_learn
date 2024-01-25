@@ -8,4 +8,10 @@ var (
 	ReleaseTag = "DEVELOPMENT.GOGET"
 
 	CommitID = "DEVELOPMENT.GOGET"
+
+
+    // version
+    VERSION = "1.0.0"
+    VERSION_STRING = "Emulator V1.0.0"
 )
+

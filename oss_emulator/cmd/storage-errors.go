@@ -141,3 +141,10 @@ func isSysErrNoSpace(err error) bool {
 func isSysErrTooManySymlinks(err error) bool {
 	return errors.Is(err, syscall.ELOOP)
 }
+
+func isSysErrNotEmpty(err error) bool {
+	if errors.Is(err, syscall.ENOTEMPTY) {
+		return true
+	}
+	return false
+}
