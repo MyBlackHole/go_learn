@@ -1,0 +1,10 @@
+<ListBucketResult xmlns="http://doc.oss-cn-hangzhou.aliyuncs.com">
+    <Name>wdg1</Name>
+    <Prefix>wdg1</Prefix>
+    <Marker>/</Marker>
+    <MaxKeys>1000</MaxKeys>
+    <Delimiter></Delimiter>
+    <EncodingType>url</EncodingType>
+    <NextMarker></NextMarker>
+    <IsTruncated></IsTruncated>
+</ListBucketResult>
